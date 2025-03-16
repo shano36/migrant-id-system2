@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -157,3 +158,5 @@ EMAIL_HOST_PASSWORD = "ytklhylrkqzeiwfm"  # Use App Password if 2FA enabled
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 TWILIO_ACCOUNT_SID = os.getenv("ACe6b6a2257ccf714b05219893431a6def")
 TWILIO_AUTH_TOKEN = os.getenv("908b7182cc8c9d38a882ec8d25875f19")
+
+WHITENOISE_KEEP_ONLY_HASHED_FILES = False
