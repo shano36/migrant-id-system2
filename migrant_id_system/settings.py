@@ -77,7 +77,7 @@ TEMPLATES = [
 ]
 
 
-WSGI_APPLICATION = 'migrant_id_system.wsgi.application'
+WSGI_APPLICATION = 'migrant_id_system2.wsgi.application'
 
 
 # Database
