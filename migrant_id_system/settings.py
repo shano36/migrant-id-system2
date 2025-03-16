@@ -77,8 +77,9 @@ TEMPLATES = [
 ]
 
 
-WSGI_APPLICATION = 'migrant_id_system2.wsgi.application'
+WSGI_APPLICATION = 'migrant_id_system.wsgi.application'
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
