@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <h2 class="login-header">Welcome Back</h2>
+    <p class="login-subtext">Please log in to continue</p>
+
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        
+        <!-- Username Field -->
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" class="form-control" required>
+        </div>
+    
+        <!-- Password Field with Eye Icon -->
+        <div class="form-group">
+            <label for="password1">Password</label>
+            <div class="password-container">
+                <input type="password" id="password1" name="password" class="form-control" required>
+                <span class="toggle-password" onclick="togglePassword()">👁</span>
+            </div>
+        </div>
+    
+        <button type="submit" class="btn-login">Login</button>
+    </form>
+
+    <div class="login-links">
+        <a href="{% url 'password_reset' %}">Forgot Password?</a> |
+        <a href="{% url 'register' %}">Register</a>
+    </div>
+</div>
+
+<style>
+    /* Center the Login Box */
+    .login-container {
+        background: white;
+        color: #002855;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        width: 400px;
+        margin: auto;
+        margin-top: 50px;
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    /* Title & Text */
+    .login-header {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .login-subtext {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    /* Form Fields */
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #002855;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 16px;
+        transition: 0.3s ease-in-out;
+    }
+
+    .form-control:focus {
+        border-color: #007bff;
+        outline: none;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+    }
+
+    /* Password Field Container */
+    .password-container {
+        position: relative;
+        width: 93%;
+    }
+
+    /* Password Input */
+    .password-container input {
+        width: 100%;
+        padding: 12px 40px 12px 12px; /* Space for the eye icon */
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 16px;
+    }
+
+    /* Toggle Password Icon */
+    .toggle-password {
+        position: absolute;
+        right: -20px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        font-size: 18px;
+        color: #888;
+        transition: color 0.3s ease-in-out;
+    }
+
+    .toggle-password:hover {
+        color: #333;
+    }
+
+    /* Login Button */
+    .btn-login {
+        width: 100%;
+        padding: 12px;
+        background: #007bff;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.3s ease-in-out;
+        box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+    }
+
+    .btn-login:hover {
+        background: #0056b3;
+        transform: scale(1.05);
+    }
+
+    /* Forgot Password & Register */
+    .login-links {
+        margin-top: 15px;
+        font-size: 14px;
+    }
+
+    .login-links a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .login-links a:hover {
+        text-decoration: underline;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<script>
+    function togglePassword() {
+        var passwordField = document.getElementById("password1");
+        var toggleIcon = document.querySelector(".toggle-password");
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            toggleIcon.textContent = "🔒"; // Show lock when visible
+        } else {
+            passwordField.type = "password";
+            toggleIcon.textContent = "👁"; // Show eye when hidden
+        }
+    }
+</script>
+{% endblock %}

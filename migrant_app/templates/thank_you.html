@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f7fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .thank-you-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 400px;
+        }
+
+        .thank-you-container h2 {
+            color: #004080;
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .thank-you-container p {
+            color: #1e293b;
+            font-size: 16px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            margin-top: 20px;
+            background: #004080;
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #002855;
+            transform: scale(1.03);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="thank-you-container">
+        <h2>Thank You!</h2>
+        <p>Your message has been received. Our team will get back to you soon.</p>
+        <a href="{% url 'home' %}" class="btn">Back to Home</a>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Check Status{% endblock %}
+
+{% block content %}
+<div class="status-container">
+    <h2>Check Your Application Status</h2>
+    <p>Enter your registered phone number to check your application status.</p>
+
+    <form id="status-form">
+        {% csrf_token %}
+        <input type="text" id="phone_number" name="phone_number" placeholder="Enter your phone number" required>
+        <button type="submit">Check Status</button>
+    </form>
+
+    <div id="status-message" class="hidden"></div>
+</div>
+
+<style>
+    .status-container {
+        text-align: center;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        margin: auto;
+        margin-top: 50px;
+    }
+
+    input {
+        width: 90%;
+        padding: 10px;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    button {
+        background: #007bff;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 10px;
+    }
+
+    button:hover {
+        background: #0056b3;
+    }
+
+    #status-message {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+        display: none;
+    }
+</style>
+
+<script>
+    document.getElementById("status-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        let phoneNumber = document.getElementById("phone_number").value;
+        let statusMessage = document.getElementById("status-message");
+
+        fetch("{% url 'check_status' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "phone_number=" + encodeURIComponent(phoneNumber)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                statusMessage.textContent = data.error;
+                statusMessage.style.color = "red";
+            } else {
+                statusMessage.textContent = data.message;
+                statusMessage.style.color = "green";
+            }
+            statusMessage.style.display = "block";
+        })
+        .catch(error => console.error("Error:", error));
+    });
+</script>
+{% endblock %}

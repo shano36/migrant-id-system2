@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <h2>Verify QR Code</h2>
+
+        <!-- QR Code Upload Form -->
+        <form id="qr-form" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" id="qr-image" name="qr_image" accept="image/*" required>
+            <button type="submit">Upload & Verify</button>
+        </form>
+
+        <!-- Result Display -->
+        <div id="result" class="result-box"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("qr-form").addEventListener("submit", async function(event) {
+                event.preventDefault();  
+                console.log("✅ Form Submitted!");
+
+                let formData = new FormData(this);
+                let csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+                try {
+                    let response = await fetch("{% url 'verify_qr_code' %}", {
+                        method: "POST",
+                        body: formData,
+                        headers: {
+                            "X-CSRFToken": csrfToken, 
+                            "X-Requested-With": "XMLHttpRequest"
+                        }
+                    });
+
+                    let text = await response.text(); // Read response as text
+                    console.log("✅ Raw Server Response:", text);
+
+                    try {
+                        let data = JSON.parse(text); // Try parsing JSON
+                        console.log("✅ Parsed JSON:", data);
+
+                        let resultDiv = document.getElementById("result");
+                        resultDiv.innerHTML = "";
+
+                        if (data.status === "success") {
+                            resultDiv.innerHTML = `
+                                <div class="success-box">
+                                    <p><strong>Full Name:</strong> ${data.full_name}</p>
+                                    <p><strong>Aadhaar Number:</strong> ${data.aadhaar_number}</p>
+                                    <p><strong>Work Location:</strong> ${data.work_location}</p>
+                                </div>
+                            `;
+                        } else {
+                            resultDiv.innerHTML = `<p class="error-message">${data.message}</p>`;
+                        }
+                    } catch (jsonError) {
+                        console.error("❌ JSON Parse Error:", jsonError);
+                        document.getElementById("result").innerHTML = "<p class='error-message'>Invalid response from server.</p>";
+                    }
+
+                } catch (error) {
+                    console.error("❌ Fetch Error:", error);
+                    document.getElementById("result").innerHTML = "<p class='error-message'>Error processing QR Code.</p>";
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="file"] {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result-box {
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        .success-box {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,309 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+    <style>
+        /* Background */
+        body {
+            background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #002855;
+            color: white;
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Title & Logo */
+        .nav-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 70px;
+            height: auto;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Navigation Buttons */
+        .buttons {
+            display: flex;
+            gap: 12px;
+            padding-right: 30px;
+        }
+
+        .btn {
+            background-color: white;
+            color: #002855;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            transition: 0.3s ease-in-out;
+        }
+
+        .btn:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.05);
+        }
+
+        /* Logout Button (Red) */
+        .btn-logout {
+            background-color: #ff4d4d;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s ease-in-out;
+        }
+
+        .btn-logout:hover {
+            background-color: #cc0000;
+            transform: scale(1.05);
+        }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            max-width: 700px;
+            margin: 120px auto 30px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .profile-section, .qr-section, .info-box {
+            background: white;
+            padding: 25px;
+            margin: 15px 0;
+            border-radius: 12px;
+            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+            transition: 0.3s ease-in-out;
+        }
+
+        .profile-section:hover, .qr-section:hover, .info-box:hover {
+            transform: scale(1.02);
+        }
+
+        h3 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #002855;
+            margin-bottom: 10px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-box ul li {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        /* QR Code */
+        .qr-section img {
+            width: 160px;
+            height: auto;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        .btn-download {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 6px;
+            margin-top: 10px;
+            transition: 0.3s ease-in-out;
+        }
+
+        .btn-download:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        .footer {
+            background: #002855;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 30px;
+        }
+
+        .footer a {
+            color: #f0f0f0;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+            transition: 0.3s ease-in-out;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
+            <span class="title">Migrant Workers Unique ID System</span>
+        </div>
+        <div class="buttons">
+            <a href="{% url 'home' %}" class="btn">Home</a>
+            <a href="{% url 'login' %}" class="btn">Settings</a>
+            <form id="logout-form" method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-logout">Logout</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <h2>Welcome, {{ worker.full_name }}</h2>
+
+        <!-- User Profile Section -->
+        <div class="profile-section">
+            <h3>👤 Your Profile</h3>
+            <p><strong>Aadhaar Number:</strong> {{ worker.aadhaar_number }}</p>
+            <p><strong>Phone Number:</strong> {{ worker.phone_number }}</p>
+            <p><strong>Work Location:</strong> {{ worker.work_location }}</p>
+        </div>
+
+        <!-- QR Code Display -->
+        <div class="qr-section">
+            <h3>📜 Your Worker ID QR Code</h3>
+            <img src="{{ worker.qr_code.url }}" alt="Your QR Code">
+            <br>
+            <a href="{{ worker.qr_code.url }}" download="Worker_QR.png" class="btn-download">📥 Download QR Code</a>
+        </div>
+
+        <!-- Work & Location Insights -->
+        <div class="info-box">
+            <h3>📍 Nearby Government Services</h3>
+            <p>Find important places that can assist migrant workers.</p>
+        
+            <!-- Location Status -->
+            <div id="location-status">
+                <button onclick="getLocation()" class="btn-locate">📍 Find Nearby Services</button>
+                <p id="location-message"></p>
+            </div>
+        
+            <!-- Service List -->
+            <ul id="services-list">
+                <li>🔍 Searching for nearby services...</li>
+            </ul>
+        </div>
+        
+
+        <!-- Latest Announcements -->
+        <div class="info-box">
+            <h3>📢 Latest Announcements</h3>
+            <p>Stay updated with the latest government notifications and worker rights information.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>
+            <a href="#">View FAQs</a> | 
+            <a href="#">Contact Support</a> | 
+            <a href="#">Privacy Policy</a> | 
+            <a href="#">Terms & Conditions</a>
+        </p>
+        <p>📧 Email: support@migrantid.gov.in</p>
+    </footer>
+</body>
+    <script>
+    function getLocationAndFetchServices() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    let latitude = position.coords.latitude;
+                    let longitude = position.coords.longitude;
+
+                    console.log("📍 Location:", latitude, longitude);
+
+                    fetchNearbyServices(latitude, longitude);
+                },
+                (error) => {
+                    console.error("❌ Location Error:", error.message);
+                    document.getElementById("service-results").innerHTML = "Unable to retrieve your location.";
+                }
+            );
+        } else {
+            document.getElementById("service-results").innerHTML = "Geolocation is not supported by this browser.";
+        }
+    }
+
+    function fetchNearbyServices(lat, lon) {
+        let apiKey = "Eb2NAtXwjae7s8EiXE26SyLzJT53BGcB"; // Replace with your actual API key
+        let query = "government office"; // You can change this to "post office", "police station", etc.
+        let url = `https://api.tomtom.com/search/2/poiSearch/${query}.json?key=${apiKey}&lat=${lat}&lon=${lon}&radius=5000&limit=5`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log("✅ TomTom API Response:", data);
+
+                if (data.results.length > 0) {
+                    let output = "<h4>📍 Nearby Government Services</h4><ul>";
+
+                    data.results.forEach(place => {
+                        output += `<li><strong>${place.poi.name}</strong> - ${place.address.freeformAddress}</li>`;
+                    });
+
+                    output += "</ul>";
+                    document.getElementById("service-results").innerHTML = output;
+                } else {
+                    document.getElementById("service-results").innerHTML = "No nearby services found.";
+                }
+            })
+            .catch(error => {
+                console.error("❌ API Fetch Error:", error);
+                document.getElementById("service-results").innerHTML = "Unable to fetch services.";
+            });
+    }
+
+    window.onload = getLocationAndFetchServices;
+</script>
+
+</script>
+</body>
+</html>

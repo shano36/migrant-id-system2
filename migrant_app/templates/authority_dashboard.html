@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <h2 style="text-align: center;">Authority Dashboard</h2>
+    <p style="text-align: center;">Welcome, {{ request.user.username }}</p>
+
+    <!-- Success Messages -->
+    {% if messages %}
+        <div style="text-align: center; color: green; font-weight: bold;">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <h3 style="text-align: center;">Pending Workers in Your District</h3>
+    
+    <div style="display: flex; justify-content: center; align-items: center;">
+        <table border="1" style="width: 80%; text-align: center; border-collapse: collapse;">
+            <tr style="background-color: #003366; color: white;">
+                <th>Full Name</th>
+                <th>Aadhaar Number</th>
+                <th>Phone Number</th>
+                <th>Work Location</th>
+                <th>Actions</th>
+            </tr>
+            {% for worker in pending_workers %}
+            <tr style="background-color: #f9f9f9;">
+                <td>{{ worker.full_name }}</td>
+                <td>{{ worker.aadhaar_number }}</td>
+                <td>{{ worker.phone_number }}</td>
+                <td>{{ worker.work_location }}</td>
+                <td>
+                    <!-- Approval Form -->
+                    <form method="post" action="{% url 'approve_worker' worker.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="action-btn approve-btn">✅ Approve</button>
+                    </form>
+
+                    <!-- Rejection Form -->
+                    <form method="post" action="{% url 'reject_worker' worker.id %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="action-btn reject-btn">❌ Reject</button>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">No pending workers.</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'verify_qr_page' %}" class="btn btn-primary">🔍 Verify QR Code</a>
+    </div>
+
+    <!-- Styles -->
+    <style>
+        /* Button Styles */
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 5px;
+            margin: 3px;
+        }
+        .approve-btn { background-color: green; color: white; }
+        .reject-btn { background-color: red; color: white; }
+
+        /* Table Styling */
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #002855;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #004080;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #002855;
+        }
+    </style>
+
+{% endblock %}

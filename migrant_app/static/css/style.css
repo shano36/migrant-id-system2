@@ -1,0 +1,154 @@
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    text-align: center;
+}
+
+/* Header */
+header {
+    background-color: #003366;
+    color: white;
+    padding: 20px;
+}
+
+/* Navigation Bar */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: #002855;
+    padding: 20px 40px; /* Increased padding for better spacing */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+/* Align the logo and title */
+.nav-left {
+    display: flex;
+    align-items: center;
+}
+
+/* Logo Styling */
+.logo {
+    max-width: 70px;  /* Slightly larger */
+    height: auto;
+    margin-right: 12px; /* Adds space between logo and title */
+}
+
+/* Title Styling */
+.nav-title {
+    font-size: 26px; /* Make title slightly larger */
+    font-weight: bold;
+    color: white;
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* Navigation Links */
+.nav-right {
+    display: flex;
+    gap: 20px; /* Adds space between Login and Register */
+    margin-right: 40px; /* Pushes buttons away from the right edge */
+}
+
+.nav-right a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 8px;
+    transition: 0.3s ease;
+}
+
+.nav-right a:hover {
+    background: #004080;
+}
+
+/* Style for Register Button */
+.btn {
+    font-size: 18px;
+    padding: 12px 22px;
+    background: #004080;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: 0.3s ease;
+}
+
+/* Prevent Button from Touching the Edge */
+.btn:hover {
+    background: #002855;
+}
+
+/* Navigation List (if needed) */
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+/* Buttons */
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Link Styling */
+a {
+    color: #000000;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    color: #ff0000; /* Light blue was mentioned but looked incorrect, so adjusted */
+}
+
+/* Logout Button */
+.logout-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.logout-button {
+    padding: 10px 20px;
+    background-color: #ff4d4d;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background 0.3s ease-in-out;
+}
+
+.logout-button:hover {
+    background-color: #cc0000;
+}
+
+.password-rules {
+    font-size: 14px;
+    color: #555;  /* Dark gray */
+    display: block;
+    margin-top: 5px;
+    line-height: 1.4;
+}

@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Success | Migrant Workers ID System</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Full Page Center */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #002855, #0056b3);
+            color: white;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Success Card */
+        .success-container {
+            background: white;
+            color: #002855;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 400px;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        /* Success Checkmark */
+        .success-icon {
+            font-size: 50px;
+            color: #28a745;
+            margin-bottom: 15px;
+            animation: pop 0.6s ease-out;
+        }
+
+        /* Success Message */
+        .success-message {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        /* Back to Home Button */
+        .btn-home {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #007bff;
+            color: white;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s ease-in-out;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+        }
+
+        .btn-home:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+
+        /* Animations */
+        @keyframes pop {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-icon">✅</div> <!-- ✅ Animated Checkmark -->
+        <h1 class="success-message">Registered Successfully!</h1>
+        <p>Your account is waiting for approval.</p>
+        <a href="{% url 'home' %}" class="btn-home">Back to Home</a>
+    </div>
+</body>
+</html>

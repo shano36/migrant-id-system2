@@ -1,0 +1,404 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Migrant Workers ID System</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* Global Styling */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f9fa;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden; /* Prevent full page scroll */
+        }
+
+        /* Left Section: Fixed Logo & Message */
+        .left-section {
+    width: 50%;
+    height: 100vh; /* Ensures full height */
+    position: fixed; /* Keeps it static */
+    left: 0;
+    top: 0;
+    background: #002855;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    padding: 50px;
+    box-sizing: border-box;
+}
+
+        
+
+        .left-section img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+
+        .left-section h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .left-section p {
+            font-size: 16px;
+            max-width: 400px;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+
+        /* Right Section: Scrollable Form */
+        .right-section {
+    width: 50%;
+    margin-left: 50%;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to bottom, #f9f9f9, #e3e8f0); /* Light gradient */
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+
+
+.register-container {
+    width: 420px; /* Slightly wider */
+    padding: 40px;
+    margin: auto; /* Centers form */
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15); /* Softer shadow */
+    border-radius: 12px;
+    text-align: left;
+    background: white;
+    border: 1px solid #ddd; /* Light border */
+}
+
+
+
+
+
+        /* Form Fields */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #002855;
+        }
+
+        .form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: 0.3s ease-in-out;
+}
+
+.form-group input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+}
+
+
+        /* Register Button */
+        .btn-register {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
+}
+
+.btn-register:hover {
+    background: #0056b3;
+    transform: scale(1.05); /* Slight hover effect */
+}
+
+
+        /* Back to Home */
+        .back-home {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .back-home a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-home a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                overflow: auto;
+            }
+
+            .left-section {
+                width: 100%;
+                height: 40vh;
+                position: relative;
+            }
+
+            .right-section {
+                width: 100%;
+                margin-left: 0;
+                height: auto;
+                padding: 30px;
+            }
+        }
+            .register-header {
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+                color: #002855;
+                margin-bottom: 15px;
+}
+.form-header {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.form-icon {
+    width: 60px;
+    opacity: 0.8;
+}
+.already-registered {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #555;
+    text-align: center;
+}
+
+.already-registered .login-link {
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.already-registered .login-link:hover {
+    text-decoration: underline;
+}
+
+
+    </style>
+</head>
+<body>
+
+    <!-- Left Section: Fixed Logo & Message -->
+    <div class="left-section">
+        <img src="{% static 'images/logo.png' %}" alt="Logo">
+        <h1>Welcome to Migrant Workers ID System</h1>
+        <p>Secure your digital identity and access government benefits easily. Join us today!</p>
+    </div>
+
+    <!-- Right Section: Scrollable Registration Form -->
+    <div class="right-section">
+        <div class="register-container">
+            <h1 class="register-header">Register as a Migrant Worker</h1>
+            <div class="form-header">
+                <img src="{% static 'images/workers.png' %}" alt="Form Icon" class="form-icon">
+            </div>
+            
+            <form method="POST" action="{% url 'register' %}">
+                {% csrf_token %}
+
+                            <!-- Username Input -->
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+                <span id="username-status"></span><br>
+                <!-- ✅ Display Username Rules -->
+                <small class="username-rules">
+                    * Username must be atleast 5 characters. <br>
+                    * Can contain letters (A-Z, a-z) and numbers (0-9). <br>
+                    * No spaces or special characters allowed. <br>
+                </small>
+            </div>
+
+                            
+                            
+
+                            
+                            <!-- Password Input -->
+            <div class="form-group">
+                <label for="password1">Password</label>
+                <input type="password" id="password1" name="password1" required>
+                <span id="password-strength"></span><br>
+                <!-- ✅ Display Password Rules -->
+                <small class="password-rules">
+                    * Password must be at least 8 characters long. <br>
+                    * Must contain at least one letter. <br>
+                    * Must contain at least one number. <br>
+                    * Must contain at least one special character (@, #, $, etc.).
+                </small>
+            </div>
+
+
+                <div class="form-group">
+                    <label for="password2">Confirm Password</label>
+                    <input type="password" id="password2" name="password2" required>
+                    <span id="confirm-password-status"></span>  <!-- ✅ Message will appear here -->
+                </div>
+                
+
+                <div class="form-group">
+                    <label for="full-name">Full Name</label>
+                    <input type="text" id="full-name" name="full_name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="aadhaar_number">Aadhaar Number</label>
+                    <input type="text" id="aadhaar_number" name="aadhaar_number" required maxlength="12">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email ID</label>
+                    <input type="text" id="email" name="email" required>
+                    <span id="email-status"></span>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="phone_number">Phone Number</label>
+                    <input type="text" id="phone_number" name="phone_number" required maxlength="10">
+                </div>
+                
+
+                <div class="form-group">
+                    <label for="work-location">Work Location</label>
+                    <input type="text" id="work-location" name="work_location" required>
+                </div>
+
+                <button type="submit" class="btn-register">Register</button>
+            </form>
+            <!-- Register Button -->
+
+
+<!-- Already Registered? Login Link -->
+<p class="already-registered">
+    Already Registered? <a href="{% url 'login' %}" class="login-link">Login</a>
+</p>
+
+
+            <div class="back-home">
+                <a href="{% url 'home' %}">Back to Home</a>
+            </div>
+        </div>
+    </div>
+    <script>
+      document.getElementById('username').addEventListener('input', function() {
+    var username = this.value;
+    var status = document.getElementById('username-status');
+
+    var usernameRegex = /^[a-zA-Z_][a-zA-Z0-9_]{4,}$/;  // ✅ Starts with a letter or underscore, allows letters, numbers, _
+    if (!usernameRegex.test(username)) {
+        status.innerHTML = 'Invalid Username (Min 4 chars, only letters and numbers)';
+        status.style.color = 'red';
+        return;  // ✅ Keeps the message visible
+    }
+
+    fetch(`/check-username/?username=${username}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.available) {
+                status.innerHTML = '✅ Username Available';
+                status.style.color = 'green';
+            } else {
+                status.innerHTML = '❌ Username Taken';
+                status.style.color = 'red';
+            }
+        }).catch(error => console.error('Error:', error));
+});
+
+document.getElementById('password1').addEventListener('input', function() {
+    var password1 = this.value;
+    var strength = document.getElementById('password-strength');
+
+    
+    var hasLowercase = /[a-z]/.test(password1);
+    var hasNumber = /[0-9]/.test(password1);
+    var hasSpecial = /[@$!%*?&]/.test(password1);
+    var isValid = password1.length >= 8 && hasLowercase && hasNumber && hasSpecial;
+
+    if (password1.length === 0) {
+        strength.innerHTML = '';  // ✅ Clears message if empty
+    } else if (!isValid) {
+        strength.innerHTML = 'Must contain letters, number and special characters)';
+        strength.style.color = 'red';
+    } else {
+        strength.innerHTML = 'Password valid';
+        strength.style.color = 'green';
+    }
+});
+document.getElementById('password2').addEventListener('input', function() {
+    var password1 = document.getElementById('password1').value;
+    var password2 = this.value;
+    var confirmMessage = document.getElementById('confirm-password-status');
+
+    if (password2.length === 0) {
+        confirmMessage.innerHTML = '';  // ✅ Clears message when input is empty
+        return;
+    }
+
+    if (password1 !== password2) {
+        confirmMessage.innerHTML = 'Password do not match';
+        confirmMessage.style.color = 'red';
+    } else {
+        confirmMessage.innerHTML = 'Password match';
+        confirmMessage.style.color = 'green';
+    }
+});
+
+
+document.getElementById('email').addEventListener('input', function() {
+    var email = this.value.trim();
+    var status = document.getElementById('email-status');
+
+    if (email.length === 0) {
+        status.innerHTML = '';  // ✅ Clears message when empty
+        return;
+    }
+
+    fetch(`/check-email/?email=${email}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.available) {
+                status.innerHTML = 'Email Available';
+                status.style.color = 'green';
+            } else {
+                status.innerHTML = 'Email Already Registered';
+                status.style.color = 'red';
+            }
+        }).catch(error => console.error('Error:', error));
+});
+</script>
+</body>
+</html>
