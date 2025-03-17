@@ -232,35 +232,32 @@
                 {% csrf_token %}
 
                             <!-- Username Input -->
+            
+                 
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
-                <span id="username-status"></span><br>
-                <!-- ✅ Display Username Rules -->
-                <small class="username-rules">
-                    * Username must be atleast 5 characters. <br>
-                    * Can contain letters (A-Z, a-z) and numbers (0-9). <br>
-                    * No spaces or special characters allowed. <br>
-                </small>
-            </div>
-
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" required>
+    <small class="username-rules"></small><br> <!-- ✅ For Username Availability -->
+    <small class="username-rules">* Must be at least 5 characters</small><br>
+    <small class="username-rules">* Must contain only letters (A-Z, a-z) and numbers (0-9)</small><br>
+    <small class="username-rules">* No spaces or special characters allowed.</small><br>
+    
+</div>
                             
                             
 
                             
                             <!-- Password Input -->
-            <div class="form-group">
-                <label for="password1">Password</label>
-                <input type="password" id="password1" name="password1" required>
-                <span id="password-strength"></span><br>
-                <!-- ✅ Display Password Rules -->
-                <small class="password-rules">
-                    * Password must be at least 8 characters long. <br>
-                    * Must contain at least one letter. <br>
-                    * Must contain at least one number. <br>
-                    * Must contain at least one special character (@, #, $, etc.).
-                </small>
-            </div>
+                <div class="form-group">
+                    <label for="password1">Password</label>
+                    <input type="password" id="password1" name="password1" required>
+                    <small class="password-rules">* Must be at least 8 characters</small>
+                    <small class="password-rules">* Must contain at least one letter</small>
+                    <small class="password-rules">* Must contain at least one number</small>
+                    <small class="password-rules">* Must contain at least one special character (@, #, $, etc.)</small>
+                </div>
+                            
+
 
 
                 <div class="form-group">
@@ -314,65 +311,88 @@
         </div>
     </div>
     <script>
-      document.getElementById('username').addEventListener('input', function() {
-    var username = this.value;
-    var status = document.getElementById('username-status');
+        //✅Username Validation
+    document.getElementById('username').addEventListener('input', function () {
+    var username = this.value.trim();
+    var usernameRules = document.querySelectorAll('.username-rules');
 
-    var usernameRegex = /^[a-zA-Z_][a-zA-Z0-9_]{4,}$/;  // ✅ Starts with a letter or underscore, allows letters, numbers, _
-    if (!usernameRegex.test(username)) {
-        status.innerHTML = 'Invalid Username (Min 4 chars, only letters and numbers)';
-        status.style.color = 'red';
-        return;  // ✅ Keeps the message visible
+    // ✅ Username Validation Rules
+    var isLongEnough = username.length >= 5;
+    var isValidFormat = /^[a-zA-Z0-9]+$/.test(username); // Letters & numbers only
+    var hasNoSpaces = !/\s/.test(username); // No spaces allowed
+
+    // ✅ Helper function to update rule color
+    function updateRuleColor(ruleIndex, condition) {
+        if (condition) {
+            usernameRules[ruleIndex].style.color = 'green'; // ✅ Turns green when satisfied
+        } else if (username.length > 0) {
+            usernameRules[ruleIndex].style.color = 'red'; // ❌ Turns red only after user starts typing
+        } else {
+            usernameRules[ruleIndex].style.color = ''; // ⏳ Keeps default color when untouched
+        }
     }
 
-    fetch(`/check-username/?username=${username}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.available) {
-                status.innerHTML = '✅ Username Available';
-                status.style.color = 'green';
-            } else {
-                status.innerHTML = '❌ Username Taken';
-                status.style.color = 'red';
-            }
-        }).catch(error => console.error('Error:', error));
-});
+    // ✅ Apply Colors to Rules
+    updateRuleColor(1, isLongEnough);
+    updateRuleColor(2, isValidFormat);
+    updateRuleColor(3, hasNoSpaces);
 
-document.getElementById('password1').addEventListener('input', function() {
-    var password1 = this.value;
-    var strength = document.getElementById('password-strength');
-
-    
-    var hasLowercase = /[a-z]/.test(password1);
-    var hasNumber = /[0-9]/.test(password1);
-    var hasSpecial = /[@$!%*?&]/.test(password1);
-    var isValid = password1.length >= 8 && hasLowercase && hasNumber && hasSpecial;
-
-    if (password1.length === 0) {
-        strength.innerHTML = '';  // ✅ Clears message if empty
-    } else if (!isValid) {
-        strength.innerHTML = 'Must contain letters, number and special characters)';
-        strength.style.color = 'red';
+    // ✅ Check Username Availability (Only if all rules are satisfied)
+    if (isLongEnough && isValidFormat && hasNoSpaces) {
+        fetch(`/check-username/?username=${username}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.available) {
+                    usernameRules[0].innerHTML = '✅ Username Available';
+                    usernameRules[0].style.color = 'green';
+                } else {
+                    usernameRules[0].innerHTML = '❌ Username Taken';
+                    usernameRules[0].style.color = 'red';
+                }
+            }).catch(error => console.error('Error:', error));
     } else {
-        strength.innerHTML = 'Password valid';
-        strength.style.color = 'green';
+        usernameRules[0].innerHTML = ''; // ✅ Clears availability message if username is invalid
     }
 });
-document.getElementById('password2').addEventListener('input', function() {
+
+// ✅ Password Validation
+document.getElementById('password1').addEventListener('input', function () {
+    var password = this.value;
+    var passwordRules = document.querySelectorAll('.password-rules');
+    
+    // ✅ Check Each Rule
+    var isLongEnough = password.length >= 8;
+    var hasLetter = /[a-zA-Z]/.test(password);
+    var hasNumber = /[0-9]/.test(password);
+    var hasSpecial = /[@$!%*?&]/.test(password);
+    
+    // ✅ Apply Colors to Rules
+    passwordRules[0].style.color = isLongEnough ? 'green' : 'red';
+    passwordRules[1].style.color = hasLetter ? 'green' : 'red';
+    passwordRules[2].style.color = hasNumber ? 'green' : 'red';
+    passwordRules[3].style.color = hasSpecial ? 'green' : 'red';
+
+  
+});
+
+
+
+// ✅ Confirm Password Validation
+document.getElementById('password2').addEventListener('input', function () {
     var password1 = document.getElementById('password1').value;
     var password2 = this.value;
     var confirmMessage = document.getElementById('confirm-password-status');
 
     if (password2.length === 0) {
-        confirmMessage.innerHTML = '';  // ✅ Clears message when input is empty
+        confirmMessage.innerHTML = ''; // ✅ Clears message when input is empty
         return;
     }
 
     if (password1 !== password2) {
-        confirmMessage.innerHTML = 'Password do not match';
+        confirmMessage.innerHTML = 'Passwords do not match';
         confirmMessage.style.color = 'red';
     } else {
-        confirmMessage.innerHTML = 'Password match';
+        confirmMessage.innerHTML = 'Passwords match';
         confirmMessage.style.color = 'green';
     }
 });
@@ -391,7 +411,7 @@ document.getElementById('email').addEventListener('input', function() {
         .then(response => response.json())
         .then(data => {
             if (data.available) {
-                status.innerHTML = 'Email Available';
+                status.innerHTML = '';
                 status.style.color = 'green';
             } else {
                 status.innerHTML = 'Email Already Registered';
