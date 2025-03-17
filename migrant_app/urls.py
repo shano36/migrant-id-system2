@@ -5,6 +5,7 @@ from .views import check_username
 from . import views
 from .views import contact, thank_you
 from .views import check_email
+from .views import mobile_home
 urlpatterns = [
     path('', home, name='home'),
     path('register/', register, name='register'),
@@ -20,4 +21,6 @@ urlpatterns = [
     path("contact/", contact, name="contact"),
     path("thank-you/", thank_you, name="thank_you"),
     path("check-email/", check_email, name="check_email"),
+    path('mobile-home/', mobile_home, name='mobile_home'),
+
 ]
