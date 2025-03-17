@@ -164,14 +164,3 @@ TWILIO_AUTH_TOKEN = os.getenv("908b7182cc8c9d38a882ec8d25875f19")
 
 WHITENOISE_KEEP_ONLY_HASHED_FILES = False
 
-if os.getenv('CREATE_SUPERUSER') == 'True':
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-
-    username = os.getenv('DJANGO_SUPERUSER_USERNAME', 'shano')
-    email = os.getenv('DJANGO_SUPERUSER_EMAIL', 'shanromariyo@gmail.com')
-    password = os.getenv('DJANGO_SUPERUSER_PASSWORD', 'shan24663@$')
-
-    if not User.objects.filter(username=username).exists():
-        User.objects.create_superuser(username, email, password)
-        print("✅ Superuser created successfully!")
