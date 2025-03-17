@@ -346,12 +346,3 @@ def apply(request):
         form = ApplicationForm()
     return render(request, "apply.html", {"form": form})
 
-def mobile_home(request):
-    user_agent = request.META.get('HTTP_USER_AGENT', '').lower()
-    
-    print(f"User-Agent: {user_agent}")  # Debugging line to check device
-
-    if any(mobile in user_agent for mobile in ['iphone', 'android', 'blackberry', 'opera mini', 'mobile']):
-        return render(request, 'mobile_home.html')
-
-    return render(request, 'home.html')
