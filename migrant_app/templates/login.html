@@ -7,6 +7,20 @@
     <h2 class="login-header">Welcome Back</h2>
     <p class="login-subtext">Please log in to continue</p>
 
+    {% if form.errors %}
+    <div class="error-container">
+        <ul>
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <li class="error-message">❌ {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+
+
     <form method="POST" action="{% url 'login' %}">
         {% csrf_token %}
         
@@ -163,6 +177,34 @@
         from { opacity: 0; transform: translateY(-20px); }
         to { opacity: 1; transform: translateY(0); }
     }
+    /* Error Message Container */
+.error-container {
+    background: #ffebeb;  /* Light red background */
+    color: #d32f2f;  /* Dark red text */
+    padding: 12px;
+    border-radius: 8px;
+    text-align: left;
+    font-size: 15px;
+    font-weight: bold;
+    margin: 0 auto 15px auto; /* Centering and spacing */
+    width: 80%; /* Matches the form width */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Error Icon */
+.error-icon {
+    font-size: 18px;
+}
+
+/* Remove default bullet points */
+.error-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
 </style>
 
 <script>

@@ -4,6 +4,7 @@ from migrant_app import views  # ✅ Import views
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from migrant_app.views import user_login
 
 urlpatterns = [
     path('admin/', admin.site.urls),  
@@ -23,7 +24,7 @@ urlpatterns = [
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),  # ✅ Add this for logout
     path('', include('migrant_app.urls')),
     path('approve-worker/<int:worker_id>/', views.approve_worker, name='approve-worker'),
-
+    path("login/", user_login, name="login"),
     
 
     

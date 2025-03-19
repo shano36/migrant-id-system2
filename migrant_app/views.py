@@ -25,8 +25,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from twilio.rest import Client
 from .forms import ApplicationForm
-from .models import Application
-
+from django.contrib.auth.forms import AuthenticationForm
 
 
 # ✅ Real-time Username Check API
@@ -147,9 +146,8 @@ def approve_worker(request, worker_id):
 @user_passes_test(is_authority)
 def authority_dashboard(request):
     pending_workers = MigrantWorker.objects.filter(status="verifying")  # ✅ Fetch only "Verifying" status workers
-
     return render(request, 'authority_dashboard.html', {'pending_workers': pending_workers})
-
+    
 
 # ✅ Reject Worker (Authority)
 @login_required
@@ -234,24 +232,27 @@ def check_status(request):
 
     return render(request, "check_status.html")
 
-def login_view(request):
+
+def user_login(request):
     if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
 
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                return redirect('dashboard')  # ✅ Redirect after successful login
-            else:
-                return render(request, 'registration/login.html', {'error': 'Your account is inactive'})
+            # ✅ CLEAR ALL MESSAGES AFTER SUCCESSFUL LOGIN
+            storage = messages.get_messages(request)
+            storage.used = True  
+
+            return redirect("dashboard")  # Redirect to the authority dashboard
         else:
-            return render(request, 'registration/login.html', {'error': 'Invalid username or password'})
+            messages.error(request, "")
 
-    return render(request, 'registration/login.html')
+    else:
+        form = AuthenticationForm()
 
-print("✅ migrant_app.views is loaded successfully!")
+    return render(request, "login.html", {"form": form})
+
 
 def contact(request):
     if request.method == "POST":

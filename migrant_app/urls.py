@@ -5,6 +5,7 @@ from .views import check_username
 from . import views
 from .views import contact, thank_you
 from .views import check_email
+from .views import user_login
 
 urlpatterns = [
     path('', home, name='home'),
@@ -21,5 +22,6 @@ urlpatterns = [
     path("contact/", contact, name="contact"),
     path("thank-you/", thank_you, name="thank_you"),
     path("check-email/", check_email, name="check_email"),
+    path("login/", user_login, name="login"),
 
 ]

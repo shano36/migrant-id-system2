@@ -232,22 +232,16 @@
                 {% csrf_token %}
 
                             <!-- Username Input -->
-            
-                 
-            <div class="form-group">
-    <label for="username">Username</label>
-    <input type="text" id="username" name="username" required>
-    <small class="username-rules"></small><br> <!-- ✅ For Username Availability -->
-    <small class="username-rules">* Must be at least 5 characters</small><br>
-    <small class="username-rules">* Must contain only letters (A-Z, a-z) and numbers (0-9)</small><br>
-    <small class="username-rules">* No spaces or special characters allowed.</small><br>
-    
-</div>
+             <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+                <small class="username-rules"></small><br> <!-- ✅ For Username Availability -->
+                <small class="username-rules">* Must be at least 5 characters</small><br>
+                <small class="username-rules">* Must contain only letters (A-Z, a-z) and numbers (0-9)</small><br>
+                <small class="username-rules">* No spaces or special characters allowed.</small><br>
+            </div>
                             
-                            
-
-                            
-                            <!-- Password Input -->
+             <!-- Password Input -->
                 <div class="form-group">
                     <label for="password1">Password</label>
                     <input type="password" id="password1" name="password1" required>
@@ -311,49 +305,58 @@
         </div>
     </div>
     <script>
-        //✅Username Validation
-    document.getElementById('username').addEventListener('input', function () {
+
+document.getElementById('username').addEventListener('input', function () {
     var username = this.value.trim();
     var usernameRules = document.querySelectorAll('.username-rules');
 
-    // ✅ Username Validation Rules
-    var isLongEnough = username.length >= 5;
-    var isValidFormat = /^[a-zA-Z0-9]+$/.test(username); // Letters & numbers only
-    var hasNoSpaces = !/\s/.test(username); // No spaces allowed
+    // ✅ Ensure correct mapping of rules
+    var availabilityMsg = usernameRules[0]; // ✅ Username availability
+    var lengthRule = usernameRules[1];      // ✅ Must be at least 5 characters
+    var formatRule = usernameRules[2];      // ✅ Must contain only letters and numbers
+    var spaceRule = usernameRules[3];       // ✅ No spaces or special characters allowed
 
-    // ✅ Helper function to update rule color
-    function updateRuleColor(ruleIndex, condition) {
+    // ✅ Validation Conditions
+    var isLongEnough = username.length >= 5;
+    var hasNoSpaces = !/\s/.test(username);  // ❌ Fails if space exists
+    var isValidFormat = /^[a-zA-Z0-9\s]+$/.test(username); // ✅ Allows letters, numbers, and spaces
+
+    // ✅ Update rule colors dynamically
+    function updateRule(ruleElement, condition) {
         if (condition) {
-            usernameRules[ruleIndex].style.color = 'green'; // ✅ Turns green when satisfied
+            ruleElement.style.color = 'green'; // ✅ Turns green when satisfied
         } else if (username.length > 0) {
-            usernameRules[ruleIndex].style.color = 'red'; // ❌ Turns red only after user starts typing
+            ruleElement.style.color = 'red';   // ❌ Turns red only after user starts typing
         } else {
-            usernameRules[ruleIndex].style.color = ''; // ⏳ Keeps default color when untouched
+            ruleElement.style.color = '';      // ⏳ Resets color when untouched
         }
     }
 
-    // ✅ Apply Colors to Rules
-    updateRuleColor(1, isLongEnough);
-    updateRuleColor(2, isValidFormat);
-    updateRuleColor(3, hasNoSpaces);
+    // ✅ Apply colors correctly
+    updateRule(lengthRule, isLongEnough);
+    updateRule(formatRule, isValidFormat); // ✅ Rule 2 now allows spaces
+    updateRule(spaceRule, hasNoSpaces);  // ❌ Rule 3 still turns red for spaces
 
-    // ✅ Check Username Availability (Only if all rules are satisfied)
+    // ✅ Check Username Availability (Only if all rules pass)
     if (isLongEnough && isValidFormat && hasNoSpaces) {
         fetch(`/check-username/?username=${username}`)
             .then(response => response.json())
             .then(data => {
                 if (data.available) {
-                    usernameRules[0].innerHTML = '✅ Username Available';
-                    usernameRules[0].style.color = 'green';
+                    availabilityMsg.innerHTML = '✅ Username Available';
+                    availabilityMsg.style.color = 'green';
                 } else {
-                    usernameRules[0].innerHTML = '❌ Username Taken';
-                    usernameRules[0].style.color = 'red';
+                    availabilityMsg.innerHTML = '❌ Username Taken';
+                    availabilityMsg.style.color = 'red';
                 }
-            }).catch(error => console.error('Error:', error));
+            })
+            .catch(error => console.error('Error:', error));
     } else {
-        usernameRules[0].innerHTML = ''; // ✅ Clears availability message if username is invalid
+        availabilityMsg.innerHTML = ''; // ✅ Clears availability message
     }
 });
+
+
 
 // ✅ Password Validation
 document.getElementById('password1').addEventListener('input', function () {
