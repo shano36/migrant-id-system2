@@ -18,6 +18,7 @@ urlpatterns = [
     path('approve-worker/<int:worker_id>/', approve_worker, name='approve_worker'),
     path('verify-qr/', verify_qr_page, name='verify_qr_page'),
     path('verify-qr-code/', verify_qr_code, name='verify_qr_code'),
+    path("verify-qr/", verify_qr_code, name="verify_qr_code"),
     path('check-username/', check_username, name='check_username'),
     path('check-status/', views.check_status, name='check_status'),
     path('', views.home, name='home'),

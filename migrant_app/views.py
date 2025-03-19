@@ -185,12 +185,8 @@ def verify_qr_code(request):
 
                 if worker:
                     print("✅ Worker Found:", worker.full_name)  # Debugging log
-                    return JsonResponse({
-                        'status': 'success',
-                        'full_name': worker.full_name,
-                        'aadhaar_number': worker.aadhaar_number,
-                        'work_location': worker.work_location
-                    })
+                    return render(request, "qr_verification.html", {"worker": worker})
+
                 else:
                     print("❌ No Matching Worker Found or Not Approved")  # Debugging log
                     return JsonResponse({'status': 'error', 'message': 'Worker not found or not approved'})
