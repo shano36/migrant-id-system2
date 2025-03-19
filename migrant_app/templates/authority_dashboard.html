@@ -7,12 +7,18 @@
 
     <!-- Success Messages -->
     {% if messages %}
-        <div style="text-align: center; color: green; font-weight: bold;">
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        </div>
-    {% endif %}
+    <ul class="messages">
+        {% for message in messages %}
+            {% if message.tags == "error" %}
+                <li class="error">
+                    <span class="error-icon">❌</span>  <!-- Error icon -->
+                    {{ message }}
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% endif %}
+
 
     <h3 style="text-align: center;">Pending Workers in Your District</h3>
     
@@ -23,7 +29,7 @@
                 <th>Aadhaar Number</th>
                 <th>Phone Number</th>
                 <th>Work Location</th>
-                <th>Actions</th>
+                <th>Status</th>
             </tr>
             {% for worker in pending_workers %}
             <tr style="background-color: #f9f9f9;">
@@ -32,18 +38,16 @@
                 <td>{{ worker.phone_number }}</td>
                 <td>{{ worker.work_location }}</td>
                 <td>
-                    <!-- Approval Form -->
-                    <form method="post" action="{% url 'approve_worker' worker.id %}" style="display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="action-btn approve-btn">✅ Approve</button>
-                    </form>
-
-                    <!-- Rejection Form -->
-                    <form method="post" action="{% url 'reject_worker' worker.id %}" style="display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="action-btn reject-btn">❌ Reject</button>
-                    </form>
+                    <div class="button-group">
+                        <a href="{% url 'verify_worker' worker.id %}" class="btn-action btn-verify">
+                            Verify
+                        </a>
+                        <a href="{% url 'reject_worker' worker.id %}" class="btn-action btn-reject">
+                            Reject
+                        </a>
+                    </div>
                 </td>
+                
             </tr>
             {% empty %}
             <tr>
@@ -59,17 +63,61 @@
 
     <!-- Styles -->
     <style>
-        /* Button Styles */
-        .action-btn {
-            padding: 8px 12px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            border-radius: 5px;
-            margin: 3px;
-        }
-        .approve-btn { background-color: green; color: white; }
-        .reject-btn { background-color: red; color: white; }
+        /* ✅ Button Container Fix */
+/* ✅ Ensure buttons are in a row */
+.button-group {
+    display: flex;
+    flex-wrap: nowrap; /* Prevent wrapping */
+    gap: 12px; /* Space between buttons */
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* ✅ General Button Styling */
+.btn-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px; /* Space between icon and text */
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* ✅ Verify Button */
+.btn-verify {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-verify:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+/* ✅ Reject Button */
+.btn-reject {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-reject:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+
+    /* ✅ Button Icon Styling */
+    .btn-action i {
+        font-size: 18px;
+    }
 
         /* Table Styling */
         table {
@@ -115,6 +163,35 @@
         .btn-primary:hover {
             background: #002855;
         }
+        .messages {
+    list-style: none;
+    padding: 10px;
+    margin: 20px auto;
+    width: 80%;
+    text-align: center;
+}
+
+.messages .error {
+    background: #ffdddd; /* Soft red background */
+    color: #b30000; /* Dark red text */
+    padding: 12px 20px;
+    border-left: 5px solid #b30000c3; /* Red left border */
+    font-weight: bold;
+    border-radius: 8px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Error Icon */
+.error-icon {
+    font-size: 20px;
+    color: #b30000;
+}
+
     </style>
 
 {% endblock %}

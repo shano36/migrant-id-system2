@@ -5,6 +5,7 @@ from .models import Application
 from django.contrib import messages
 from django.utils.translation import ngettext
 from .utils import send_status_email, send_status_sms  # Import email & SMS functions
+from .models import AadhaarDatabase
 
 class MigrantWorkerAdmin(admin.ModelAdmin):
     list_display = ('full_name', 'aadhaar_number', 'phone_number', 'status')  # ❌ Removed 'is_approved'
@@ -69,3 +70,9 @@ class ApplicationAdmin(admin.ModelAdmin):
         )
 
 admin.site.register(Application, ApplicationAdmin)
+
+@admin.register(AadhaarDatabase)
+class AadhaarDatabaseAdmin(admin.ModelAdmin):
+    list_display = ("full_name", "aadhaar_number", "date_of_birth", "address")
+    search_fields = ("full_name", "aadhaar_number")
+    

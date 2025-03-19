@@ -6,6 +6,8 @@ from . import views
 from .views import contact, thank_you
 from .views import check_email
 from .views import user_login
+from .views import verify_worker
+from .views import reject_worker
 
 urlpatterns = [
     path('', home, name='home'),
@@ -23,5 +25,6 @@ urlpatterns = [
     path("thank-you/", thank_you, name="thank_you"),
     path("check-email/", check_email, name="check_email"),
     path("login/", user_login, name="login"),
-
+    path('verify-worker/<int:worker_id>/', verify_worker, name='verify_worker'),
+    path('reject-worker/<int:worker_id>/', reject_worker, name='reject_worker'),
 ]

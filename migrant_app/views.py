@@ -26,6 +26,7 @@ from django.conf import settings
 from twilio.rest import Client
 from .forms import ApplicationForm
 from django.contrib.auth.forms import AuthenticationForm
+from .models import AadhaarDatabase
 
 
 # ✅ Real-time Username Check API
@@ -122,24 +123,17 @@ def admin_dashboard(request):
 def approve_worker(request, worker_id):
     worker = get_object_or_404(MigrantWorker, id=worker_id)
 
-    if worker.user:
-        print(f"Approving Worker: {worker.full_name}")  # Debugging
+    # ✅ Check if the worker is verified (must exist in AadhaarDatabase)
+    aadhaar_record = AadhaarDatabase.objects.filter(aadhaar_number=worker.aadhaar_number).first()
 
+    if aadhaar_record:
         worker.status = "approved"
-        worker.user.is_active = True  # Activate login
-        worker.user.save(update_fields=['is_active'])  # Save only `is_active`
-        worker.save(update_fields=['status'])
-        
-        print(f"Worker Approved: {worker.full_name} | Active Status: {worker.user.is_active}")  # Debugging
-        send_status_email(worker)
-        messages.success(request, f"{worker.full_name} has been approved and can now log in!")
-        return redirect('authority_dashboard')
-
+        worker.save()
+        messages.success(request, f"✅ {worker.full_name} has been approved!")
     else:
-        print("Error: No user linked to this worker.")  # Debugging
-        messages.error(request, "Error: No user linked to this worker.")
+        messages.error(request, "❌ Cannot approve. Aadhaar verification is required!")
 
-    return redirect('admin_dashboard')
+    return redirect('authority_dashboard')
 
 # ✅ Authority Dashboard - View Pending Workers
 @login_required
@@ -159,7 +153,7 @@ def reject_worker(request, worker_id):
     worker.status = "rejected"
     worker.save()
 
-    messages.success(request, f"{worker.full_name} has been rejected ❌")
+    messages.error(request, f"{worker.full_name} has been rejected")
     return redirect('authority_dashboard')
 
 
@@ -347,3 +341,16 @@ def apply(request):
         form = ApplicationForm()
     return render(request, "apply.html", {"form": form})
 
+def verify_worker(request, worker_id):
+    worker = get_object_or_404(MigrantWorker, id=worker_id)
+
+    # ✅ Try to find Aadhaar details in the Aadhaar Database
+    aadhaar_record = AadhaarDatabase.objects.filter(aadhaar_number=worker.aadhaar_number).first()
+
+    if aadhaar_record:
+        # ✅ Verified - Show details to the authority
+        return render(request, 'verify_worker.html', {'worker': worker, 'aadhaar_record': aadhaar_record})
+    else:
+        # ❌ No Aadhaar match - Show error
+        messages.error(request, "Aadhaar number not found in database. Verification failed!")
+        return redirect('authority_dashboard')  # Redirect back to dashboard

@@ -7,6 +7,7 @@ from .utils import send_status_email, send_status_sms  # Import email & SMS func
 
 
 class MigrantWorker(models.Model):
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=200)
     aadhaar_number = models.CharField(max_length=12, unique=True, db_index=True)
@@ -14,9 +15,7 @@ class MigrantWorker(models.Model):
     phone_number = models.CharField(max_length=10, unique=True)
     work_location = models.CharField(max_length=255)
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="updated_workers")
-
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
-
     STATUS_CHOICES = [
         ("approved", "Approved"),
         ("rejected", "Rejected"),
@@ -70,3 +69,12 @@ class Application(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.status}"
+
+class AadhaarDatabase(models.Model):
+    full_name = models.CharField(max_length=255)
+    aadhaar_number = models.CharField(max_length=12, unique=True)
+    date_of_birth = models.CharField(max_length=10)  # ✅ Store as string to keep "DD/MM/YYYY" format
+    address = models.TextField()
+
+    def __str__(self):
+        return f"{self.full_name} - {self.aadhaar_number}"
