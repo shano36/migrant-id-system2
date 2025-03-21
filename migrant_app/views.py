@@ -129,11 +129,18 @@ def approve_worker(request, worker_id):
     if aadhaar_record:
         worker.status = "approved"
         worker.save()
+
+        # ✅ Activate User Account (so they can log in)
+        if worker.user:
+            worker.user.is_active = True
+            worker.user.save(update_fields=['is_active'])
+
         messages.success(request, f"✅ {worker.full_name} has been approved!")
-    else:
-        messages.error(request, "❌ Cannot approve. Aadhaar verification is required!")
+    
+        
 
     return redirect('authority_dashboard')
+
 
 # ✅ Authority Dashboard - View Pending Workers
 @login_required
@@ -163,41 +170,55 @@ def verify_qr_page(request):
 
 
 # ✅ Process QR Code Verification
+
 @login_required
 def verify_qr_code(request):
     if request.method == 'POST' and request.FILES.get('qr_image'):
         file = request.FILES['qr_image'].read()
-        image = cv2.imdecode(np.frombuffer(file, np.uint8), cv2.IMREAD_COLOR)
-        detector = cv2.QRCodeDetector()
-        data, _, _ = detector.detectAndDecode(image)
+        
+        try:
+            image = cv2.imdecode(np.frombuffer(file, np.uint8), cv2.IMREAD_COLOR)
+            detector = cv2.QRCodeDetector()
+            data, _, _ = detector.detectAndDecode(image)
+        except Exception as e:
+            print(f"❌ QR Code Processing Error: {e}")
+            messages.error(request, "Error processing QR Code.")
+            return redirect("verify_qr_page")
 
-        print("✅ Extracted QR Code Data:", data)  # Debugging log
+        print("✅ Extracted QR Code Data:", data)
 
         if data:
-            # Extract Aadhaar number using regex (assuming it's exactly 12 digits)
+            # ✅ Extract Aadhaar number from URL or direct scan
             match = re.search(r'\b\d{12}\b', data)
             if match:
-                aadhaar_number = match.group(0)  # Extracted Aadhaar number
-                print("✅ Extracted Aadhaar Number:", aadhaar_number)  # Debugging log
+                aadhaar_number = match.group(0)
+                print("✅ Extracted Aadhaar Number:", aadhaar_number)
 
-                # Query the database with extracted Aadhaar number
+                # ✅ Check if worker is approved
                 worker = MigrantWorker.objects.filter(Q(aadhaar_number=aadhaar_number) & Q(status="approved")).first()
 
                 if worker:
-                    print("✅ Worker Found:", worker.full_name)  # Debugging log
-                    return render(request, "qr_verification.html", {"worker": worker})
+                    print("✅ Worker Found:", worker.full_name)
+
+                    # ✅ Redirect to verification result page with Aadhaar Number
+                    return redirect("verify_qr_result", aadhaar_number=worker.aadhaar_number)
 
                 else:
-                    print("❌ No Matching Worker Found or Not Approved")  # Debugging log
-                    return JsonResponse({'status': 'error', 'message': 'Worker not found or not approved'})
+                    print("❌ No Matching Worker Found or Not Approved")
+                    messages.error(request, "❌ Worker not found or not approved.")
+                    return redirect("verify_qr_page")
 
-            print("❌ Aadhaar Number Not Found in QR Code Data")  # Debugging log
-            return JsonResponse({'status': 'error', 'message': 'Invalid QR Code data format'})
+            print("❌ Aadhaar Number Not Found in QR Code Data")
+            messages.error(request, "❌ Invalid QR Code format. No valid Aadhaar number found.")
+            return redirect("verify_qr_page")
 
-        print("❌ Invalid QR Code")  # Debugging log
-        return JsonResponse({'status': 'error', 'message': 'Invalid QR Code'})
+        print("❌ Invalid QR Code")
+        messages.error(request, "❌ QR Code is not valid or unreadable.")
+        return redirect("verify_qr_page")
 
-    return JsonResponse({'status': 'error', 'message': 'Invalid request'})
+    messages.error(request, "❌ Invalid request. Please upload a valid QR Code.")
+    return redirect("verify_qr_page")
+
 
 def check_status(request):
     if request.method == "POST":
@@ -226,22 +247,26 @@ def check_status(request):
 def user_login(request):
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        print(f"🔍 Debugging Login: Username={username}, Password={password}")  # Debug log
+
+        user = authenticate(username=username, password=password)
+
+        if user:
+            print(f"✅ Login Successful: {user.username}")
             login(request, user)
-
-            # ✅ CLEAR ALL MESSAGES AFTER SUCCESSFUL LOGIN
-            storage = messages.get_messages(request)
-            storage.used = True  
-
-            return redirect("dashboard")  # Redirect to the authority dashboard
+            return redirect("dashboard")
         else:
-            messages.error(request, "")
+            print("❌ Login Failed: Invalid Credentials")  # Debugging log
+            messages.error(request, "Invalid username or password")
 
     else:
         form = AuthenticationForm()
 
     return render(request, "login.html", {"form": form})
+
 
 
 def contact(request):
@@ -350,3 +375,8 @@ def verify_worker(request, worker_id):
         # ❌ No Aadhaar match - Show error
         messages.error(request, "Aadhaar number not found in database. Verification failed!")
         return redirect('authority_dashboard')  # Redirect back to dashboard
+    
+def verify_qr_result(request, aadhaar_number):
+    worker = MigrantWorker.objects.filter(aadhaar_number=aadhaar_number, status="approved").first()
+
+    return render(request, "qr_verification.html", {"worker": worker})    

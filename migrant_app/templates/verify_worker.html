@@ -274,8 +274,15 @@
 
     <!-- Action Buttons -->
     <div class="action-buttons">
-        <a href="{% url 'approve_worker' worker.id %}" class="btn-action btn-success">Approve</a>
-        <a href="{% url 'reject_worker' worker.id %}" class="btn-action btn-danger">Reject</a>
+        <form method="post" action="{% url 'approve_worker' worker.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn-action btn-success">✅ Approve</button>
+        </form>
+        <form method="post" action="{% url 'reject_worker' worker.id %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn-action btn-danger">❌ Reject</button>
+        </form>
+        
         <a href="{% url 'authority_dashboard' %}" class="btn-action btn-secondary">Back</a>
     </div>
 </div>

@@ -337,9 +337,17 @@ document.getElementById('username').addEventListener('input', function () {
     updateRule(formatRule, isValidFormat); // ✅ Rule 2 now allows spaces
     updateRule(spaceRule, hasNoSpaces);  // ❌ Rule 3 still turns red for spaces
 
+     // ✅ Get CSRF token from the hidden input field
+     var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
     // ✅ Check Username Availability (Only if all rules pass)
     if (isLongEnough && isValidFormat && hasNoSpaces) {
-        fetch(`/check-username/?username=${username}`)
+        fetch(`/check-username/?username=${username}`, {
+            method: "GET",
+            headers: {
+                "X-CSRFToken": csrfToken  // ✅ CSRF token included in headers
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 if (data.available) {
@@ -409,8 +417,15 @@ document.getElementById('email').addEventListener('input', function() {
         status.innerHTML = '';  // ✅ Clears message when empty
         return;
     }
+     // ✅ Get CSRF token from the hidden input field
+     var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-    fetch(`/check-email/?email=${email}`)
+     fetch(`/check-email/?email=${email}`, {
+        method: "GET",
+        headers: {
+            "X-CSRFToken": csrfToken  // ✅ CSRF token included in headers
+        }
+    })
         .then(response => response.json())
         .then(data => {
             if (data.available) {
