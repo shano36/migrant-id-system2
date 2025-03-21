@@ -176,43 +176,42 @@ def verify_qr_code(request):
     if request.method == 'POST' and request.FILES.get('qr_image'):
         file = request.FILES['qr_image'].read()
         
+        # ✅ Decode QR Code
         try:
             image = cv2.imdecode(np.frombuffer(file, np.uint8), cv2.IMREAD_COLOR)
             detector = cv2.QRCodeDetector()
             data, _, _ = detector.detectAndDecode(image)
         except Exception as e:
-            print(f"❌ QR Code Processing Error: {e}")
-            messages.error(request, "Error processing QR Code.")
+            print(f"❌ QR Code Processing Error: {e}")  # Debugging log
+            messages.error(request, "❌ Error processing QR Code.")
             return redirect("verify_qr_page")
 
-        print("✅ Extracted QR Code Data:", data)
+        print("✅ Extracted QR Code Data:", data)  # Debugging log
 
         if data:
-            # ✅ Extract Aadhaar number from URL or direct scan
+            # ✅ Extract Aadhaar number using regex (ensure exactly 12 digits)
             match = re.search(r'\b\d{12}\b', data)
             if match:
-                aadhaar_number = match.group(0)
-                print("✅ Extracted Aadhaar Number:", aadhaar_number)
+                aadhaar_number = match.group(0)  # ✅ Extracted Aadhaar number
+                print("✅ Extracted Aadhaar Number:", aadhaar_number)  # Debugging log
 
-                # ✅ Check if worker is approved
+                # ✅ Query the database for an approved worker
                 worker = MigrantWorker.objects.filter(Q(aadhaar_number=aadhaar_number) & Q(status="approved")).first()
 
                 if worker:
-                    print("✅ Worker Found:", worker.full_name)
-
-                    # ✅ Redirect to verification result page with Aadhaar Number
-                    return redirect("verify_qr_result", aadhaar_number=worker.aadhaar_number)
+                    print("✅ Worker Found:", worker.full_name)  # Debugging log
+                    return redirect("verify_qr_result", aadhaar_number=worker.aadhaar_number)  # 🔄 Redirect to result page
 
                 else:
-                    print("❌ No Matching Worker Found or Not Approved")
+                    print("❌ No Matching Worker Found or Not Approved")  # Debugging log
                     messages.error(request, "❌ Worker not found or not approved.")
                     return redirect("verify_qr_page")
 
-            print("❌ Aadhaar Number Not Found in QR Code Data")
+            print("❌ Aadhaar Number Not Found in QR Code Data")  # Debugging log
             messages.error(request, "❌ Invalid QR Code format. No valid Aadhaar number found.")
             return redirect("verify_qr_page")
 
-        print("❌ Invalid QR Code")
+        print("❌ Invalid QR Code")  # Debugging log
         messages.error(request, "❌ QR Code is not valid or unreadable.")
         return redirect("verify_qr_page")
 

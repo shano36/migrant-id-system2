@@ -15,47 +15,61 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            document.getElementById("qr-form").addEventListener("submit", async function(event) {
-                event.preventDefault();  
-                console.log("✅ Form Submitted!");
+    document.getElementById("qr-form").addEventListener("submit", async function(event) {
+        event.preventDefault();  
+        console.log("✅ Form Submitted!");
 
-                let formData = new FormData(this);
-                let csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+        let formData = new FormData(this);
+        let csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
 
-                try {
-                    let response = await fetch("{% url 'verify_qr_code' %}", {
-                        method: "POST",
-                        body: formData,
-                        headers: {
-                            "X-CSRFToken": csrfToken, 
-                            "X-Requested-With": "XMLHttpRequest"
-                        }
-                    });
-
-                    let text = await response.text(); // Read response as text
-                    console.log("✅ Raw Server Response:", text);
-
-                    try {
-                        let data = JSON.parse(text); // Try parsing JSON
-                        console.log("✅ Parsed JSON:", data);
-
-                        if (data.status === "success") {
-                            // ✅ Redirect to new verification result page
-                            window.location.href = `/verify_qr/${data.aadhaar_number}/`;
-                        } else {
-                            alert(data.message); // Show error as an alert
-                        }
-                    } catch (jsonError) {
-                        console.error("❌ JSON Parse Error:", jsonError);
-                        alert("Invalid response from server.");
-                    }
-
-                } catch (error) {
-                    console.error("❌ Fetch Error:", error);
-                    alert("Error processing QR Code.");
+        try {
+            let response = await fetch("{% url 'verify_qr_code' %}", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": csrfToken, 
+                    "X-Requested-With": "XMLHttpRequest"
                 }
             });
-        });
+
+            if (response.redirected) {
+                window.location.href = response.url;  // 🔄 Redirect to new page
+                return;
+            }
+
+            let text = await response.text(); // Read response as text
+            console.log("✅ Raw Server Response:", text);
+
+            try {
+                let data = JSON.parse(text); // Try parsing JSON
+                console.log("✅ Parsed JSON:", data);
+
+                let resultDiv = document.getElementById("result");
+                resultDiv.innerHTML = "";
+
+                if (data.status === "success") {
+                    resultDiv.innerHTML = `
+                        <div class="success-box">
+                            <p><strong>Full Name:</strong> ${data.full_name}</p>
+                            <p><strong>Aadhaar Number:</strong> ${data.aadhaar_number}</p>
+                            <p><strong>Work Location:</strong> ${data.work_location}</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<p class="error-message">${data.message}</p>`;
+                }
+            } catch (jsonError) {
+                console.error("❌ JSON Parse Error:", jsonError);
+                document.getElementById("result").innerHTML = "<p class='error-message'>Invalid response from server.</p>";
+            }
+
+        } catch (error) {
+            console.error("❌ Fetch Error:", error);
+            document.getElementById("result").innerHTML = "<p class='error-message'>Error processing QR Code.</p>";
+        }
+    });
+});
+
     </script>
 
     <style>
