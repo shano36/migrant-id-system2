@@ -100,8 +100,6 @@
     // Call function on page load if valid location is available
     if (latitude !== "0" && longitude !== "0") {
         showPosition(latitude, longitude);
-    } else {
-        document.getElementById("location-message").innerHTML = "❌ No location data available.";
     }
 </script>
 {% endblock %}
