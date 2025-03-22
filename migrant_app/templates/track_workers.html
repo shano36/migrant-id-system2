@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block navbar_buttons %}
+<a href="{% url 'workers_list' %}" class="btn">Back</a>
+<form id="logout-form" method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn-logout">Logout</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<div class="worker-info">
+    <h2>📍 Tracking: {{ worker.full_name }}</h2>
+
+    <!-- Location Message -->
+    <p id="location-message" class="location-text">Fetching last recorded location...</p>
+    
+    {% if location_available %}
+        <p>
+            <a id="map-link" href="https://www.google.com/maps?q={{ latitude }},{{ longitude }}" 
+               target="_blank" class="map-link">
+                🗺️ View on Google Maps
+            </a>
+        </p>
+    {% else %}
+        <p class="error-text">❌ No location data available.</p>
+    {% endif %}
+</div>
+<style>
+/* Worker Info Container */
+.worker-info {
+        width: 60%;
+        margin: 50px auto;
+        background: white;
+        padding: 25px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+        border-radius: 10px;
+        text-align: center;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Text Styling */
+    .location-text { font-size: 16px; color: #333; }
+    .error-text { color: red; font-weight: bold; }
+
+    /* Map Link */
+    .map-link {
+        display: inline-block;
+        text-decoration: none;
+        font-weight: bold;
+        color: blue;
+        margin-top: 10px;
+    }
+    
+     /* Logout Button (Red) */
+.btn-logout {
+    background-color: #ff4d4d;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s ease-in-out;
+}
+
+.btn-logout:hover {
+    background-color: #cc0000;
+    transform: scale(1.05);
+}
+</style>
+<script>
+    // Get latitude & longitude from Django template
+    var latitude = "{{ latitude|default:'0' }}";
+    var longitude = "{{ longitude|default:'0' }}";
+
+    function showPosition(lat, lon) {
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.address) {
+                    let area = data.address.suburb || data.address.village || data.address.town || "Unknown Area";
+                    let city = data.address.city || data.address.county || data.address.state || "Unknown City";
+
+                    document.getElementById("location-message").innerHTML = 
+                        `Last Recorded Location: <strong>${area}, ${city}</strong>`;
+                } else {
+                    document.getElementById("location-message").innerHTML = 
+                        "⚠️ Unable to determine location.";
+                }
+            })
+            .catch(error => {
+                document.getElementById("location-message").innerHTML = "❌ Error fetching location.";
+                console.error("Error:", error);
+            });
+    }
+
+    // Call function on page load if valid location is available
+    if (latitude !== "0" && longitude !== "0") {
+        showPosition(latitude, longitude);
+    } else {
+        document.getElementById("location-message").innerHTML = "❌ No location data available.";
+    }
+</script>
+{% endblock %}

@@ -36,7 +36,7 @@ header {
 
 /* Logo Styling */
 .logo {
-    max-width: 70px;  /* Slightly larger */
+    max-width: 100px;  /* Slightly larger */
     height: auto;
     margin-right: 12px; /* Adds space between logo and title */
 }

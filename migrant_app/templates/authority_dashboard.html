@@ -1,9 +1,19 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block navbar_buttons %}
+<a href="{% url 'verify_qr_page' %}" class="btn">Verify QR Code</a>
+<a href="{% url 'workers_list' %}" class="btn">Workers list</a>
+<form id="logout-form" method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn-logout">Logout</button>
+</form>
+{% endblock %}
+
+
 {% block content %}
     <h2 style="text-align: center;">Authority Dashboard</h2>
-    <p style="text-align: center;">Welcome, {{ request.user.username }}</p>
+    <h4 style="text-align: center;">Welcome, {{ request.user.username }}</h4>
 
     <!-- Success Messages -->
     {% if messages %}
@@ -57,12 +67,27 @@
         </table>
     </div>
 
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="{% url 'verify_qr_page' %}" class="btn btn-primary">🔍 Verify QR Code</a>
-    </div>
 
     <!-- Styles -->
     <style>
+
+        /* Logout Button (Red) */
+.btn-logout {
+    background-color: #ff4d4d;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s ease-in-out;
+}
+
+.btn-logout:hover {
+    background-color: #cc0000;
+    transform: scale(1.05);
+}
         /* ✅ Button Container Fix */
 /* ✅ Ensure buttons are in a row */
 .button-group {
@@ -191,7 +216,12 @@
     font-size: 20px;
     color: #b30000;
 }
-
+h2 {
+    margin-top: 30px; /* Pushes the content below the navbar */
+}
+ h4 {
+    margin-top: 20px; /* Pushes the content below the navbar */
+}
     </style>
 
 {% endblock %}

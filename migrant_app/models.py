@@ -15,7 +15,9 @@ class MigrantWorker(models.Model):
     work_location = models.CharField(max_length=255)
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="updated_workers")
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
-
+    last_latitude = models.FloatField(null=True, blank=True)
+    last_longitude = models.FloatField(null=True, blank=True)
+    
     STATUS_CHOICES = [
         ("approved", "Approved"),
         ("rejected", "Rejected"),

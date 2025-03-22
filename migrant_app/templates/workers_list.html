@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block navbar_buttons %}
+<a href="{% url 'authority_dashboard' %}" class="btn">Back</a>
+<form id="logout-form" method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn-logout">Logout</button>
+</form>
+{% endblock %}
+
+{% block content %}
+<h2 style="text-align: center;margin-top: 50px">👷‍♂️ All Registered Workers</h2>
+
+<!-- 🔍 Search & Filter Section -->
+<div class="search-filter-container">
+    <input type="text" id="searchInput" onkeyup="filterWorkers()" placeholder="🔍 Search by Name, Aadhaar, Phone">
+    
+    <select id="statusFilter" onchange="filterWorkers()">
+        <option value="">All Status</option>
+        <option value="Approved">Aproved</option>
+        <option value="Verifying">Verifying</option>
+        <option value="Rejected">Rejected</option>
+    </select>
+
+    <button onclick="exportToCSV()" class="btn-export">📥 Export CSV</button>
+</div>
+
+<!-- 📋 Worker List Table -->
+<div class="table-container">
+    <table id="workerTable">
+        <thead>
+            <tr>
+                <th>Full Name</th>
+                <th>Aadhaar Number</th>
+                <th>Phone Number</th>
+                <th>Work Location</th>
+                <th>Email</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for worker in workers %}
+            <tr onclick="viewWorkerDetails('{{ worker.id }}')" class="clickable-row">
+                <td>{{ worker.full_name }}</td>
+                <td>{{ worker.aadhaar_number }}</td>
+                <td>{{ worker.phone_number }}</td>
+                <td>{{ worker.work_location }}</td>
+                <td>{{ worker.email }}</td>
+                <td>{{ worker.status }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No workers found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- ✅ Styles -->
+<style>
+    /* 📌 General Styles */
+    .search-filter-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    input, select {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .btn-export {
+        background: #28a745;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-export:hover {
+        background: #218838;
+    }
+
+    /* 📋 Table Styling */
+.table-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+table {
+    width: 90%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+th {
+    background-color: #002855;
+    color: white;
+}
+
+/* ✅ Alternate Row Colors */
+tr:nth-child(odd) {
+    background-color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #00285526;  /* Light Blue */
+}
+
+tr:hover {
+    background-color: #adc8e4;  /* Slightly Darker Blue on Hover */
+}
+/* ✅ Clickable Row Effect */
+.clickable-row {
+        cursor: pointer;
+        transition: background 0.3s ease-in-out;
+    }
+
+    .clickable-row:hover {
+        background-color: #c0dbff !important;
+    }
+    /* Logout Button (Red) */
+.btn-logout {
+    background-color: #ff4d4d;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s ease-in-out;
+}
+
+.btn-logout:hover {
+    background-color: #cc0000;
+    transform: scale(1.05);
+}
+</style>
+
+<!-- 🔧 JavaScript for Search & CSV Export -->
+<script>
+function filterWorkers() {
+    var input = document.getElementById("searchInput").value.toUpperCase();
+    var statusFilter = document.getElementById("statusFilter").value.toUpperCase();
+    var table = document.getElementById("workerTable");
+    var tr = table.getElementsByTagName("tr");
+
+    for (var i = 1; i < tr.length; i++) {
+        var name = tr[i].getElementsByTagName("td")[0]?.textContent.toUpperCase() || "";
+        var aadhaar = tr[i].getElementsByTagName("td")[1]?.textContent.toUpperCase() || "";
+        var phone = tr[i].getElementsByTagName("td")[2]?.textContent.toUpperCase() || "";
+        var status = tr[i].getElementsByTagName("td")[5]?.textContent.toUpperCase() || "";
+
+        if (
+            (name.includes(input) || aadhaar.includes(input) || phone.includes(input)) &&
+            (statusFilter === "" || status.includes(statusFilter))
+        ) {
+            tr[i].style.display = "";
+        } else {
+            tr[i].style.display = "none";
+        }
+    }
+}
+
+function exportToCSV() {
+    var csv = [];
+    var rows = document.querySelectorAll("#workerTable tr");
+
+    for (var i = 0; i < rows.length; i++) {
+        var row = [];
+        var cols = rows[i].querySelectorAll("td, th");
+
+        for (var j = 0; j < cols.length; j++) {
+            row.push(cols[j].innerText);
+        }
+        csv.push(row.join(","));
+    }
+
+    var csvContent = "data:text/csv;charset=utf-8," + csv.join("\n");
+    var encodedUri = encodeURI(csvContent);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "workers_list.csv");
+    document.body.appendChild(link);
+    link.click();
+}
+function viewWorkerDetails(workerId) {
+        window.location.href = "/track_workers/" + workerId;  // Redirect to worker details page
+    }
+</script>
+
+{% endblock %}

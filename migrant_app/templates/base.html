@@ -4,11 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Migrant Workers ID System{% endblock %}</title>
+    <title>{% block title %}Migrant Workers Unique ID System{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 
     <style>
-        /* Navigation Bar */
+        /* General Styling */
+        body {
+            background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar (Smaller & Fixed) */
         .navbar {
             position: fixed;
             top: 0;
@@ -16,105 +25,71 @@
             width: 100%;
             background-color: #002855;
             color: white;
-            padding: 25px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: all 0.6s ease-in-out;
-            z-index: 1000;
-        }
-
-        .navbar.shrink {
-            flex-direction: row;
-            justify-content: space-between;
             padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
         }
 
         /* Logo & Title */
         .nav-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
-        }
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 
-        .logo {
-            width: 80px;
-            height: auto;
-            transition: width 0.6s ease-in-out, transform 0.6s ease-in-out;
-        }
+.logo {
+    width: 100px;
+    height: auto;
+}
 
-        .navbar.shrink .logo {
-            width: 50px;
-            transform: translateX(-20px);
-        }
-
-        .title {
-            font-size: 26px;
-            font-weight: bold;
-            transition: font-size 0.6s ease-in-out, transform 0.6s ease-in-out;
-        }
-
-        .navbar.shrink .title {
-            font-size: 18px;
-            transform: translateX(-20px);
-        }
+.title {
+    font-size: 24px;
+    font-weight: bold;
+}
 
         /* Buttons */
         .buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 10px;
-            transition: transform 0.6s ease-in-out, opacity 0.6s ease-in-out;
-            padding-right: 20px;  /* ✅ Pushes buttons slightly inward */
-        }
-
-        .navbar.shrink .buttons {
-            transform: translateY(-10px);
-            opacity: 0.9;
-            margin-top: 0;
-        }
+    display: flex;
+    gap: 12px;
+    padding-right: 30px;
+    margin-top: 0px;
+}
 
         .btn {
-            background-color: white;
-            color: #002855;
-            padding: 10px 20px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 14px;
-            transition: transform 0.3s ease-in-out, background 0.3s ease-in-out;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+    background-color: white;
+    color: #002855;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    transition: 0.3s ease-in-out;
+}
 
-        .btn:hover {
-            background-color: #f0f0f0;
-            transform: scale(1.05);
-        }
-
-        /* ✅ Moves the buttons inward so they don’t touch the edge */
-        .buttons a:last-child {
-            margin-right: 15px;
-        }
+.btn:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.05);
+}
 
         /* Page Content */
         main {
-            margin-top: 150px;
+            flex: 1;
+            margin-top: 80px;  /* Adjusted for smaller navbar */
             padding: 20px;
         }
 
-        /* Prevent login box from overlapping navbar */
-        .login-container {
-            margin-top: 80px;
-        }
+        /* Footer */
         .footer {
             background: #002855;
             color: white;
             text-align: center;
             padding: 15px;
-            margin-top: 30px;
+            width: 100%;
+            margin-top: auto;
         }
 
         .footer a {
@@ -133,22 +108,23 @@
 </head>
 <body>
 
-<header class="navbar" id="navbar">
+<header class="navbar">
     <div class="nav-container">
         <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
         <span class="title">Migrant Workers Unique ID System</span>
     </div>
     <div class="buttons">
+        {% block navbar_buttons %}
         <a href="{% url 'home' %}" class="btn">Home</a>
         <a href="{% url 'check_status' %}" class="btn">Check Status</a>
         <a href="{% url 'contact' %}" class="btn">Contact Us</a>
+        {% endblock %}
     </div>
 </header>
 
 <main>
     {% block content %}{% endblock %}
 </main>
-
 
 <footer class="footer">
     <p>
@@ -158,19 +134,7 @@
         <a href="#">Terms & Conditions</a>
     </p>
     <p>📧 Email: support@migrantid.gov.in</p>
-    <p>&copy; 2025 Migrant Workers Unique ID System. All Rights Reserved.</p>
 </footer>
-
-<script>
-    window.addEventListener("scroll", function () {
-        let navbar = document.getElementById("navbar");
-        if (window.scrollY > 60) {
-            navbar.classList.add("shrink");
-        } else {
-            navbar.classList.remove("shrink");
-        }
-    });
-</script>
 
 </body>
 </html>

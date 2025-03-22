@@ -1,180 +1,178 @@
+{% extends "base.html" %}
+{% block title %}dashboard{% endblock %}
+
+{% block content %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 
     <style>
-        /* Background */
-        body {
-            background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
-            font-family: 'Inter', sans-serif;
-        }
+       /* Background */
+html, body {
+    background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
+    font-family: 'Inter', sans-serif;
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
 
-        /* Navbar */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #002855;
-            color: white;
-            padding: 12px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        }
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #002855;
+    color: white;
+    padding: 12px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
 
-        /* Title & Logo */
-        .nav-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+/* Title & Logo */
+.nav-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 
-        .logo {
-            width: 70px;
-            height: auto;
-        }
+.logo {
+    width: 100px;
+    height: auto;
+}
 
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-        }
+.title {
+    font-size: 24px;
+    font-weight: bold;
+}
 
-        /* Navigation Buttons */
-        .buttons {
-            display: flex;
-            gap: 12px;
-            padding-right: 30px;
-        }
+/* Navigation Buttons */
+.buttons {
+    display: flex;
+    gap: 12px;
+    padding-right: 30px;
+    margin-top: 0px;
+}
 
-        .btn {
-            background-color: white;
-            color: #002855;
-            padding: 10px 20px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            transition: 0.3s ease-in-out;
-        }
+.btn {
+    background-color: white;
+    color: #002855;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    transition: 0.3s ease-in-out;
+}
 
-        .btn:hover {
-            background-color: #f0f0f0;
-            transform: scale(1.05);
-        }
+.btn:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.05);
+}
 
-        /* Logout Button (Red) */
-        .btn-logout {
-            background-color: #ff4d4d;
-            color: white;
-            font-weight: bold;
-            border: none;
-            border-radius: 6px;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: 0.3s ease-in-out;
-        }
+/* Logout Button (Red) */
+.btn-logout {
+    background-color: #ff4d4d;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s ease-in-out;
+}
 
-        .btn-logout:hover {
-            background-color: #cc0000;
-            transform: scale(1.05);
-        }
+.btn-logout:hover {
+    background-color: #cc0000;
+    transform: scale(1.05);
+}
 
-        /* Dashboard Container */
-        .dashboard-container {
-            max-width: 700px;
-            margin: 120px auto 30px;
-            text-align: center;
-            padding: 20px;
-        }
+/* Main Page Content */
+.dashboard-container {
+    max-width: 700px;
+    margin: 30px auto 30px; /* Reduce margin-top */
+    text-align: center;
+    padding: 20px;
+}
 
-        .profile-section, .qr-section, .info-box {
-            background: white;
-            padding: 25px;
-            margin: 15px 0;
-            border-radius: 12px;
-            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
-            transition: 0.3s ease-in-out;
-        }
+/* Content Boxes */
+.profile-section, .qr-section, .info-box {
+    background: white;
+    padding: 25px;
+    margin: 15px 0;
+    border-radius: 12px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+    transition: 0.3s ease-in-out;
+}
 
-        .profile-section:hover, .qr-section:hover, .info-box:hover {
-            transform: scale(1.02);
-        }
+.profile-section:hover, .qr-section:hover, .info-box:hover {
+    transform: scale(1.02);
+}
 
-        h3 {
-            font-size: 20px;
-            font-weight: bold;
-            color: #002855;
-            margin-bottom: 10px;
-        }
+h3 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #002855;
+    margin-bottom: 10px;
+}
 
-        .info-box ul {
-            list-style: none;
-            padding: 0;
-        }
+.info-box ul {
+    list-style: none;
+    padding: 0;
+}
 
-        .info-box ul li {
-            margin: 5px 0;
-            font-size: 16px;
-            color: #333;
-        }
+.info-box ul li {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #333;
+}
 
-        /* QR Code */
-        .qr-section img {
-            width: 160px;
-            height: auto;
-            margin-top: 10px;
-            border-radius: 8px;
-        }
+/* QR Code */
+.qr-section img {
+    width: 160px;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 8px;
+}
 
-        .btn-download {
-            display: inline-block;
-            padding: 10px 15px;
-            background: #007bff;
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            border-radius: 6px;
-            margin-top: 10px;
-            transition: 0.3s ease-in-out;
-        }
+.btn-download {
+    display: inline-block;
+    padding: 10px 15px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 6px;
+    margin-top: 10px;
+    transition: 0.3s ease-in-out;
+}
 
-        .btn-download:hover {
-            background: #0056b3;
-            transform: scale(1.05);
-        }
+.btn-download:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+}
+.btn-sos {
+    display: inline-block;
+    padding: 10px 15px;
+    background: #ff0000;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 6px;
+    margin-top: 10px;
+    transition: 0.3s ease-in-out;
+}
 
-        /* Footer */
-        .footer {
-            background: #002855;
-            color: white;
-            text-align: center;
-            padding: 15px;
-            margin-top: 30px;
-        }
+.btn-sos:hover {
+    background: #ff0000;
+    transform: scale(1.05);
+}
 
-        .footer a {
-            color: #f0f0f0;
-            text-decoration: none;
-            margin: 0 10px;
-            font-weight: bold;
-            transition: 0.3s ease-in-out;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-            color: #ffd700;
-        }
     </style>
 </head>
 <body>
@@ -221,7 +219,7 @@
         
             <!-- Location Status -->
             <div id="location-status">
-                <button onclick="getLocation()" class="btn-locate">📍 Find Nearby Services</button>
+                <button onclick="getLocation()" class="btn-download">📍 Find Nearby Services</button>
                 <p id="location-message"></p>
             </div>
         
@@ -232,78 +230,210 @@
         </div>
         
 
-        <!-- Latest Announcements -->
-        <div class="info-box">
-            <h3>📢 Latest Announcements</h3>
-            <p>Stay updated with the latest government notifications and worker rights information.</p>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <p>
-            <a href="#">View FAQs</a> | 
-            <a href="#">Contact Support</a> | 
-            <a href="#">Privacy Policy</a> | 
-            <a href="#">Terms & Conditions</a>
-        </p>
-        <p>📧 Email: support@migrantid.gov.in</p>
-    </footer>
+ <!-- Latest Announcements Section -->
+<div class="info-box">
+    <h3>📢 Latest Announcements</h3>
+    <p>Stay updated with the latest government notifications and worker rights information.</p>
+    <button onclick="fetchAnnouncements()" class="btn-download">🔍 View Updates</button>
+    
+    <!-- Announcement List -->
+    <ul id="announcement-list">
+        <li>📌 Click the button to load latest announcements...</li>
+    </ul>
+</div>
+ 
+<div class="info-box">
+    <h3>🚨SOS Alert </h3>
+    <p>Click the button in case of any emergency.</p>
+    <button id="sosButton" class="btn-sos">SOS Emergency</button>
+</div>
+  
 </body>
     <script>
-    function getLocationAndFetchServices() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    let latitude = position.coords.latitude;
-                    let longitude = position.coords.longitude;
+  function getLocation() {
+    const locationMessage = document.getElementById("location-message");
+    const servicesList = document.getElementById("services-list");
 
-                    console.log("📍 Location:", latitude, longitude);
-
-                    fetchNearbyServices(latitude, longitude);
-                },
-                (error) => {
-                    console.error("❌ Location Error:", error.message);
-                    document.getElementById("service-results").innerHTML = "Unable to retrieve your location.";
-                }
-            );
-        } else {
-            document.getElementById("service-results").innerHTML = "Geolocation is not supported by this browser.";
-        }
+    if (navigator.geolocation) {
+        locationMessage.innerHTML = "📍 Getting your location...";
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+        locationMessage.innerHTML = "❌ Geolocation is not supported by this browser.";
     }
 
-    function fetchNearbyServices(lat, lon) {
-        let apiKey = "Eb2NAtXwjae7s8EiXE26SyLzJT53BGcB"; // Replace with your actual API key
-        let query = "government office"; // You can change this to "post office", "police station", etc.
-        let url = `https://api.tomtom.com/search/2/poiSearch/${query}.json?key=${apiKey}&lat=${lat}&lon=${lon}&radius=5000&limit=5`;
+    function showPosition(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
 
-        fetch(url)
+        // Fetch the human-readable address using Reverse Geocoding
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
             .then(response => response.json())
             .then(data => {
-                console.log("✅ TomTom API Response:", data);
+                if (data.address) {
+                    let area = data.address.suburb || data.address.village || data.address.town || "Unknown Area";
+                    let city = data.address.city || data.address.county || data.address.state || "Unknown City";
 
-                if (data.results.length > 0) {
-                    let output = "<h4>📍 Nearby Government Services</h4><ul>";
+                    locationMessage.innerHTML = `📍 You are in <strong>${area}, ${city}</strong>`;
 
-                    data.results.forEach(place => {
-                        output += `<li><strong>${place.poi.name}</strong> - ${place.address.freeformAddress}</li>`;
-                    });
-
-                    output += "</ul>";
-                    document.getElementById("service-results").innerHTML = output;
+                    // Fetch nearby services with updated text
+                    fetchNearbyServices(lat, lon);
                 } else {
-                    document.getElementById("service-results").innerHTML = "No nearby services found.";
+                    locationMessage.innerHTML = "⚠️ Unable to determine your exact location.";
                 }
             })
             .catch(error => {
-                console.error("❌ API Fetch Error:", error);
-                document.getElementById("service-results").innerHTML = "Unable to fetch services.";
+                locationMessage.innerHTML = "❌ Error fetching location details.";
+                console.error("Error:", error);
             });
     }
 
-    window.onload = getLocationAndFetchServices;
+    function showError(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                locationMessage.innerHTML = "❌ You denied location access.";
+                break;
+            case error.POSITION_UNAVAILABLE:
+                locationMessage.innerHTML = "❌ Location info unavailable.";
+                break;
+            case error.TIMEOUT:
+                locationMessage.innerHTML = "⏳ Location request timed out.";
+                break;
+            default:
+                locationMessage.innerHTML = "❌ An unknown error occurred.";
+        }
+    }
+}
+
+function fetchNearbyServices(lat, lon) {
+    const servicesList = document.getElementById("services-list");
+    servicesList.innerHTML = ""; // Clear old results
+
+    // Services with specific Google Maps search links
+    const services = [
+        { name: "Government Offices Near Me", icon: "🏢", query: "government offices near me" },
+        { name: "Police Stations Near Me", icon: "🚔", query: "police stations near me" },
+        { name: "Hospitals Near Me", icon: "🏥", query: "hospitals, clinics, government hospitals near me" },
+        { name: "Employment Offices Near Me", icon: "📄", query: "employment offices near me" }
+    ];
+
+    services.forEach(service => {
+        const li = document.createElement("li");
+        li.innerHTML = `<a href="https://www.google.com/maps/search/${encodeURIComponent(service.query)}/@${lat},${lon},14z" 
+                        target="_blank" style="text-decoration: none; color: black; font-weight: bold;">
+                            ${service.icon} ${service.name}
+                        </a>`;
+        servicesList.appendChild(li);
+    });
+}
+function fetchAnnouncements() {
+    const announcementList = document.getElementById("announcement-list");
+    announcementList.innerHTML = "🔄 Fetching latest updates...";
+
+    let apiKey = "5b32617aaea1925333641d852dc9cebb"; // Replace with your actual GNews API key
+    let fromDate = new Date();
+    fromDate.setDate(fromDate.getDate() - 10); // Get date 10 days ago
+    let formattedDate = fromDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
+
+    let url = `https://gnews.io/api/v4/search?q="migrant workers" OR "labor rights" OR "employment" OR "wages" OR "government policy"&lang=en&country=in&from=${formattedDate}&sortby=publishedAt&token=${apiKey}`;
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("GNews API Response:", data); // Debugging
+
+            announcementList.innerHTML = ""; // Clear old results
+
+            if (data.articles && data.articles.length > 0) {
+                // Sort articles by published date (newest first)
+                let sortedArticles = data.articles.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+
+                sortedArticles.forEach(article => {
+                    if (article.title && article.url) {
+                        const li = document.createElement("li");
+                        li.innerHTML = `<a href="${article.url}" target="_blank" 
+                                        style="text-decoration: none; color: black;">
+                                            📢 ${article.title} - <small>${new Date(article.publishedAt).toLocaleString()}</small>
+                                        </a>`;
+                        announcementList.appendChild(li);
+                    }
+                });
+            } else {
+                announcementList.innerHTML = "⚠️ No relevant announcements available.";
+            }
+        })
+        .catch(error => {
+            announcementList.innerHTML = "❌ Error fetching announcements. Check console.";
+            console.error("API Fetch Error:", error);
+        });
+}
+
+document.getElementById("sosButton").addEventListener("click", function () {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(sendSOSAlert, showError);
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+});
+
+function sendSOSAlert(position) {
+    let latitude = position.coords.latitude;
+    let longitude = position.coords.longitude;
+
+    fetch("/send_sos_alert/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken()
+        },
+        body: JSON.stringify({
+            latitude: latitude,
+            longitude: longitude
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("🚨 SOS alert sent successfully!");
+        } else {
+            alert("❌ Failed to send SOS alert.");
+        }
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+function showError(error) {
+    alert("❌ Unable to retrieve location: " + error.message);
+}
+
+function getCSRFToken() {
+    return document.cookie.split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        .split('=')[1];
+}
+
+function sendLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                fetch("{% url 'dashboard' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: `latitude=${position.coords.latitude}&longitude=${position.coords.longitude}`
+                });
+            });
+        }
+    }
+
+    // Send location when page loads
+    window.onload = sendLocation;
+
 </script>
 
-
-</body>
-</html>
+{% endblock %}

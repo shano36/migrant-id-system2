@@ -27,6 +27,7 @@ from twilio.rest import Client
 from .forms import ApplicationForm
 from django.contrib.auth.forms import AuthenticationForm
 from .models import AadhaarDatabase
+import json
 
 
 # ✅ Real-time Username Check API
@@ -105,7 +106,14 @@ def dashboard(request):
     if worker.status != "approved":
         messages.error(request, "Your account has not been approved yet.")
         return redirect('home')
+    if request.method == "POST":
+        latitude = request.POST.get("latitude")
+        longitude = request.POST.get("longitude")
 
+        if latitude and longitude:
+            worker.last_latitude = latitude
+            worker.last_longitude = longitude
+            worker.save()
     # ✅ Render dashboard if approved
     return render(request, 'dashboard.html', {'worker': worker})
 
@@ -379,3 +387,68 @@ def verify_qr_result(request, aadhaar_number):
     worker = MigrantWorker.objects.filter(aadhaar_number=aadhaar_number, status="approved").first()
 
     return render(request, "qr_verification.html", {"worker": worker})    
+
+def send_sos_alert(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            latitude = data.get("latitude")
+            longitude = data.get("longitude")
+
+            if not request.user.is_authenticated:
+                return JsonResponse({"success": False, "error": "User not authenticated"}, status=403)
+
+            # ✅ Fetch worker details from the MigrantWorker model
+            try:
+                worker = MigrantWorker.objects.get(user=request.user)
+            except MigrantWorker.DoesNotExist:
+                return JsonResponse({"success": False, "error": "Worker profile not found"}, status=404)
+
+            message = f"""
+            🚨 SOS Alert!
+            Worker Name: {worker.full_name}
+            Aadhaar Number: {worker.aadhaar_number}
+            Phone: {worker.phone_number}
+            Location: https://www.google.com/maps?q={latitude},{longitude}
+            """
+
+            send_mail(
+                subject="🚨 Emergency SOS Alert",
+                message=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,  # ✅ Corrected sender email
+                recipient_list=["mwuid@gmail.com"],  # ✅ Send to the authority email
+                fail_silently=False
+            )
+
+            return JsonResponse({"success": True})
+
+        except Exception as e:
+            return JsonResponse({"success": False, "error": str(e)}, status=500)
+
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+
+@login_required
+@user_passes_test(is_authority, login_url='/accounts/login/')  # ✅ Restrict to Authorities only
+def workers_list(request):
+    workers = MigrantWorker.objects.all().order_by('-id')  # ✅ Fetch all workers, latest first
+    return render(request, 'workers_list.html', {'workers': workers})
+
+def track_workers(request, worker_id):
+    worker = get_object_or_404(MigrantWorker, id=worker_id)
+
+    # ✅ Ensure stored latitude & longitude are being passed correctly
+    if worker.last_latitude is not None and worker.last_longitude is not None:
+        location_available = True
+        latitude = float(worker.last_latitude)
+        longitude = float(worker.last_longitude)
+    else:
+        location_available = False
+        latitude = None
+        longitude = None
+
+    return render(request, "track_workers.html", {
+        "worker": worker,
+        "location_available": location_available,
+        "latitude": latitude,
+        "longitude": longitude
+    })

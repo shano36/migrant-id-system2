@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block navbar_buttons %}
+<a href="{% url 'authority_dashboard' %}" class="btn">Back</a>
+<a href="{% url 'workers_list' %}" class="btn">Workers list</a>
+<form id="logout-form" method="post" action="{% url 'logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn-logout">Logout</button>
+</form>
+{% endblock %}
+
 {% block content %}
     <div class="container">
         <h2>Verify QR Code</h2>
@@ -76,6 +85,7 @@
         .container {
             max-width: 500px;
             margin: 0 auto;
+            margin-top: 60px;
             text-align: center;
             padding: 20px;
             background-color: #f9f9f9;
@@ -100,6 +110,24 @@
 
         button:hover {
             background-color: #0056b3;
+        }
+
+        /* Logout Button (Red) */
+        .btn-logout {
+            background-color: #ff4d4d;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s ease-in-out;
+        }
+
+        .btn-logout:hover {
+            background-color: #cc0000;
+            transform: scale(1.05);
         }
     </style>
 {% endblock %}
