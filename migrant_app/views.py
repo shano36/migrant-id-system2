@@ -1,4 +1,5 @@
 from django import forms
+import pandas as pd
 from django.contrib import admin, messages
 from django.urls import path, include
 from django.shortcuts import render, redirect, get_object_or_404
@@ -452,3 +453,20 @@ def track_workers(request, worker_id):
         "latitude": latitude,
         "longitude": longitude
     })
+
+def map_dashboard(request):
+    data = None
+    selected_date = None
+
+    if request.method == 'POST':
+        month = request.POST.get('month')
+        year = request.POST.get('year')
+        selected_date = f"{year}-{month.zfill(2)}"  # Format as '2025-01'
+
+        df = pd.read_csv('future_predictions.csv')
+        df = df[df['Date'] == selected_date]
+
+        # Prepare a dictionary like {'State1': 12345, 'State2': 6789, ...}
+        data = df.set_index('State')['Predicted_Migrant_Workers'].to_dict()
+
+    return render(request, 'map_dashboard.html', {'data': data, 'selected_date': selected_date})

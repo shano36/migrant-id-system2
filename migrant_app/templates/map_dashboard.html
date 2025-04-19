@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Migration Map Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>Migrant Worker Predictions - {{ selected_date }}</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label for="month">Month (01–12):</label>
+        <input type="text" name="month" required>
+        <label for="year">Year:</label>
+        <input type="text" name="year" required>
+        <button type="submit">Show Map</button>
+    </form>
+
+    {% if data %}
+        <div id="map" style="height:600px;"></div>
+
+        <script>
+            const stateData = {{ data|safe }};
+
+            const states = Object.keys(stateData);
+            const values = Object.values(stateData);
+
+            const trace = {
+                type: 'choropleth',
+                locationmode: 'country names',
+                locations: states,
+                z: values,
+                text: states,
+                colorscale: 'Blues',
+                marker: {line: {color: 'rgb(180,180,180)', width: 1}},
+            };
+
+            const layout = {
+                title: 'Predicted Migrant Workers by State',
+                geo: {
+                    scope: 'asia',
+                    resolution: 50,
+                    showframe: false,
+                    showcoastlines: true,
+                    countrycolor: 'white',
+                    projection: {type: 'mercator'}
+                }
+            };
+
+            Plotly.newPlot('map', [trace], layout);
+        </script>
+    {% endif %}
+</body>
+</html>
