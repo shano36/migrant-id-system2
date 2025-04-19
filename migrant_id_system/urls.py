@@ -25,6 +25,7 @@ urlpatterns = [
     path('', include('migrant_app.urls')),
     path('approve-worker/<int:worker_id>/', views.approve_worker, name='approve-worker'),
     path("login/", user_login, name="login"),
+    path("map/", map, name="map"),
     
 
     
