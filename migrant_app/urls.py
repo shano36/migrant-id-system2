@@ -3,7 +3,7 @@ from .views import (
     home, register, dashboard, admin_dashboard, authority_dashboard,
     approve_worker, reject_worker, verify_worker,
     verify_qr_page, verify_qr_code, verify_qr_result, check_status,  # ✅ Added check_status
-    contact, thank_you, check_username, check_email, user_login, send_sos_alert, workers_list,track_workers, map_dashboard
+    contact, thank_you, check_username, check_email, user_login, send_sos_alert, workers_list,track_workers, migrant_prediction_view
 
 )
 
@@ -41,6 +41,6 @@ urlpatterns = [
     path('workers_list/', workers_list, name='workers_list'),
     path('track_workers/<int:worker_id>/',track_workers,name='track_workers'),
 
-    path('dashboard/', map_dashboard, name='map_dashboard'),  # New map route
+    path('migrant_form/', migrant_prediction_view, name='migrant_form'),
 
 ]

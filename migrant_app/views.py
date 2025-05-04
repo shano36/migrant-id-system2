@@ -28,6 +28,7 @@ from twilio.rest import Client
 from .forms import ApplicationForm
 from django.contrib.auth.forms import AuthenticationForm
 from .models import AadhaarDatabase
+import os
 import json
 
 
@@ -454,19 +455,37 @@ def track_workers(request, worker_id):
         "longitude": longitude
     })
 
-def map_dashboard(request):
-    data = None
-    selected_date = None
+def migrant_prediction_view(request):
+    prediction = None
+    state = month = year = ""
 
     if request.method == 'POST':
+        state = request.POST.get('state')
         month = request.POST.get('month')
         year = request.POST.get('year')
-        selected_date = f"{year}-{month.zfill(2)}"  # Format as '2025-01'
+        selected_date = f"{year}-{month.zfill(2)}"
 
-        df = pd.read_csv('future_predictions.csv')
-        df = df[df['Date'] == selected_date]
+        file_path = os.path.join(settings.BASE_DIR, 'future_predictions.csv')
+        df = pd.read_csv(file_path)
 
-        # Prepare a dictionary like {'State1': 12345, 'State2': 6789, ...}
-        data = df.set_index('State')['Predicted_Migrant_Workers'].to_dict()
+        match = df[(df['Date'] == selected_date) & (df['State'].str.lower() == state.lower())]
+        if not match.empty:
+            prediction = int(match['Predicted_Migrant_Workers'].values[0])
+        else:
+            prediction = 0
 
-    return render(request, 'map_dashboard.html', {'data': data, 'selected_date': selected_date})
+    states = sorted([
+        'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa',
+        'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala',
+        'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland',
+        'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
+        'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+    ])
+
+    return render(request, 'migrant_form.html', {
+        'states': states,
+        'months': [f"{i:02d}" for i in range(1, 13)],
+        'years': [str(y) for y in range(2025, 2031)],
+        'prediction': prediction,
+        'selected': {'state': state, 'month': month, 'year': year} if request.method == 'POST' else None,
+    })

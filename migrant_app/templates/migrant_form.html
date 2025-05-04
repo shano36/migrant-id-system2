@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Migrant_form{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Migrant Worker Prediction</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      text-align: center;
+      padding: 30px;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      display: inline-block;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    select, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+    }
+    .result {
+      margin-top: 30px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #007BFF;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Predicted Migrant Workers</h2>
+
+  <form method="POST">
+    {% csrf_token %}
+    <select name="state" required>
+      <option value="">Select State</option>
+      {% for s in states %}
+        <option value="{{ s }}" {% if selected and selected.state == s %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+    <select name="month" required>
+      <option value="">Month</option>
+      {% for m in months %}
+        <option value="{{ m }}" {% if selected and selected.month == m %}selected{% endif %}>{{ m }}</option>
+      {% endfor %}
+    </select>
+    <select name="year" required>
+      <option value="">Year</option>
+      {% for y in years %}
+        <option value="{{ y }}" {% if selected and selected.year == y %}selected{% endif %}>{{ y }}</option>
+      {% endfor %}
+    </select>
+    <br>
+    <button type="submit">Check Prediction</button>
+  </form>
+
+  {% if prediction is not None %}
+  {% load humanize %}
+    <div class="result">
+      Predicted workers for <strong>{{ selected.state }}</strong> in
+      <strong>{{ selected.month }}/{{ selected.year }}</strong> is:
+      <strong>{{ prediction|intcomma }}</strong>
+    </div>
+  {% endif %}
+
+</body>
+</html>
+{% endblock %}
