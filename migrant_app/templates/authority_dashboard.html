@@ -4,6 +4,7 @@
 {% block navbar_buttons %}
 <a href="{% url 'verify_qr_page' %}" class="btn">Verify QR Code</a>
 <a href="{% url 'workers_list' %}" class="btn">Workers list</a>
+<a href="{% url 'migrant_form' %}" class="btn btn-login">Prediction</a>
 <form id="logout-form" method="post" action="{% url 'logout' %}">
     {% csrf_token %}
     <button type="submit" class="btn-logout">Logout</button>
